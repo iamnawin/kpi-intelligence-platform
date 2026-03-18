@@ -1,62 +1,151 @@
-# KPI Intelligence Platform
+# 🚀 KPI Intelligence Platform
 
-An AI-powered KPI dashboard that helps managers track KPIs, understand changes, and take action.
+> **Understand WHY your KPIs change — not just WHAT changed.**
 
-## Problem
+The KPI Intelligence Platform transforms raw metrics into actionable insights, helping teams move beyond dashboards into real decision-making.
 
-Most tools show numbers but do not explain why they changed or what to do next.
+---
 
-## Solution
+## 📊 Dashboard Preview
 
-A platform that displays KPI dashboards, provides trend analysis, explains changes using AI, and suggests actions.
+![Dashboard](./docs/assets/dashboard.png)
 
-## Tech Stack
+---
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
+## 🧠 What is this?
 
-## Project Structure
+Most tools show numbers.
+
+This platform explains:
+
+* **Why metrics changed**
+* **What’s driving performance**
+* **What action to take next**
+
+This is not just a dashboard —
+👉 it’s a **decision intelligence system**.
+
+---
+
+## ✨ Key Capabilities
+
+* 📈 Track KPIs with real-time trends
+* 🔍 Drill down into performance (region, team, time)
+* 🧠 AI-powered insights (coming next)
+* 🚨 Alerts for anomalies and risks
+* ⚡ Clean, fast, and modular UI
+
+---
+
+## 🏗️ Tech Stack
+
+* **Next.js (App Router)**
+* **TypeScript**
+* **Tailwind CSS**
+* **Lucide Icons**
+* **Modular Component Architecture**
+* **AI-ready data layer (mock → real)**
+
+---
+
+## 🧭 Project Structure
 
 ```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── page.tsx            # Dashboard (KPI overview)
-│   ├── alerts/             # Alerts list
-│   ├── insights/           # AI Insights (coming in Step 4)
-│   └── kpis/[id]/          # KPI drill-down detail
-├── components/
-│   ├── layout/             # AppShell, Sidebar, FilterBar
-│   └── kpi/                # KPICard, KPIGrid, TrendBadge
-└── lib/
-    ├── mock-data.ts         # Mock KPI + Alert data
-    └── utils.ts             # cn(), formatNumber()
+kpi-intelligence-platform/
+│
+├── .claude/                # AI workflow & plans
+├── docs/                   # Product documentation
+├── src/
+│   ├── app/                # Next.js App Router pages
+│   ├── components/         # Reusable UI components
+│   │   ├── layout/
+│   │   └── kpi/
+│   ├── lib/                # Utilities & mock data
+│
+└── package.json
 ```
 
-## Getting Started
+---
+
+## 🚀 Getting Started
 
 ```bash
+# Install dependencies
 npm install
+
+# Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open:
 
-## Features (Current: Step 1 — UI Skeleton)
+```
+http://localhost:3000
+```
 
-- [x] KPI dashboard with card grid
-- [x] Sidebar navigation
-- [x] Date / Region / Team filters
-- [x] KPI drill-down pages
-- [x] Alerts page
-- [x] Responsive layout
+---
 
-## Roadmap
+## 🛣️ Roadmap
 
-| Step | Feature | Status |
-|------|---------|--------|
-| 1 | UI Skeleton | ✅ Done |
-| 2 | One KPI end-to-end (charts + real drill-down) | 🔜 Next |
-| 3 | Backend API | ⬜ Planned |
-| 4 | AI Insights | ⬜ Planned |
+### ✅ Step 1 — UI Skeleton
+
+* KPI dashboard
+* Sidebar navigation
+* Mock data
+* Drill-down routes
+
+### 🔄 Step 2 — KPI Intelligence
+
+* Real KPI detail page
+* Trend charts (Recharts)
+* Breakdown by region/team
+
+### 🔜 Step 3 — Backend Integration
+
+* API layer
+* Data persistence
+* Real-time updates
+
+### 🔮 Step 4 — AI Insights Engine
+
+* Explain KPI changes
+* Suggest actions
+* Predict trends
+
+---
+
+## 🧪 Current Status
+
+* ✅ Fully working dashboard UI
+* ✅ Modular component system
+* ✅ Type-safe mock data layer
+* ⏳ KPI deep-dive (in progress)
+
+---
+
+## 🎯 Vision
+
+To build an **AI-native KPI platform** that:
+
+* doesn’t just report metrics
+* but actively **guides decisions and predicts outcomes**
+
+---
+
+## 🤝 Contributing
+
+This project is evolving rapidly.
+Ideas, feedback, and improvements are welcome.
+
+---
+
+## 📌 Author
+
+Built by Naveen
+AI + Product + Salesforce enthusiast
+
+---
+
+## ⭐ If you like this project
+
+Give it a star ⭐ — it helps a lot!
