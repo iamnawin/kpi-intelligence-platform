@@ -34,9 +34,23 @@ export type LinkedKPI = {
   changePercent: number
 }
 
+export type EvidenceType = 'note' | 'link' | 'file' | 'metric'
+
+export type EvidenceRecord = {
+  id: string
+  title: string
+  description: string | null
+  evidence_type: EvidenceType
+  source_url: string | null
+  trust_level: TrustLevel
+  uploader_name: string | null
+  created_at: string
+}
+
 export type GoalDetailData = {
   goal: GoalWithKPICount
   kpis: LinkedKPI[]
+  evidence: EvidenceRecord[]
 }
 
 async function getWorkspaceId(): Promise<string | null> {
@@ -118,22 +132,47 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     .eq('goal_id', id)
 
   if (!kpis || kpis.length === 0) {
+    const { data: evidenceRows } = await supabase
+      .from('evidence')
+      .select('id, title, description, evidence_type, source_url, trust_level, created_at, uploader:workspace_members!uploaded_by(display_name)')
+      .eq('goal_id', id)
+      .order('created_at', { ascending: false })
+      .limit(10)
+
     return {
       goal: { ...goal, status: goal.status as GoalStatus, trust_level: goal.trust_level as TrustLevel, kpi_count: 0 },
       kpis: [],
+      evidence: (evidenceRows ?? []).map(e => ({
+        id: e.id,
+        title: e.title,
+        description: e.description,
+        evidence_type: e.evidence_type as EvidenceType,
+        source_url: e.source_url,
+        trust_level: e.trust_level as TrustLevel,
+        uploader_name: (e.uploader as unknown as { display_name: string | null } | null)?.display_name ?? null,
+        created_at: e.created_at,
+      })),
     }
   }
 
   const kpiIds = kpis.map(k => k.id)
 
-  const { data: allValues } = await supabase
-    .from('kpi_values')
-    .select('kpi_id, value, recorded_at')
-    .in('kpi_id', kpiIds)
-    .order('recorded_at', { ascending: false })
+  const [valuesResult, evidenceResult] = await Promise.all([
+    supabase
+      .from('kpi_values')
+      .select('kpi_id, value, recorded_at')
+      .in('kpi_id', kpiIds)
+      .order('recorded_at', { ascending: false }),
+    supabase
+      .from('evidence')
+      .select('id, title, description, evidence_type, source_url, trust_level, created_at, uploader:workspace_members!uploaded_by(display_name)')
+      .eq('goal_id', id)
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ])
 
   const linkedKpis: LinkedKPI[] = kpis.map(kpi => {
-    const vals = (allValues ?? []).filter(v => v.kpi_id === kpi.id)
+    const vals = (valuesResult.data ?? []).filter(v => v.kpi_id === kpi.id)
     const sparkline = buildSparkline(vals)
     const current = sparkline[sparkline.length - 1] ?? 0
     const previous = sparkline[0] ?? 0
@@ -151,6 +190,17 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     }
   })
 
+  const evidence: EvidenceRecord[] = (evidenceResult.data ?? []).map(e => ({
+    id: e.id,
+    title: e.title,
+    description: e.description,
+    evidence_type: e.evidence_type as EvidenceType,
+    source_url: e.source_url,
+    trust_level: e.trust_level as TrustLevel,
+    uploader_name: (e.uploader as unknown as { display_name: string | null } | null)?.display_name ?? null,
+    created_at: e.created_at,
+  }))
+
   return {
     goal: {
       ...goal,
@@ -159,5 +209,6 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
       kpi_count: kpis.length,
     },
     kpis: linkedKpis,
+    evidence,
   }
 }

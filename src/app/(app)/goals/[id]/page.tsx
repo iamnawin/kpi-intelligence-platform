@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, BarChart2 } from "lucide-react"
+import { ArrowLeft, BarChart2, Lock } from "lucide-react"
 import { fetchGoalById } from "@/lib/goal-data"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { TrustBadge } from "@/components/goal/trust-badge"
+import { EvidenceCard } from "@/components/goal/evidence-card"
 import { TrendBadge } from "@/components/kpi/trend-badge"
 import { formatNumber } from "@/lib/utils"
 
@@ -14,7 +15,7 @@ export default async function GoalDetailPage({ params }: Props) {
   const data = await fetchGoalById(id)
   if (!data) notFound()
 
-  const { goal, kpis } = data
+  const { goal, kpis, evidence } = data
 
   return (
     <div>
@@ -103,6 +104,26 @@ export default async function GoalDetailPage({ params }: Props) {
                   </div>
                 )}
               </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Evidence */}
+      <div className="mt-8">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+          Evidence ({evidence.length})
+        </h2>
+
+        {evidence.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center">
+            <Lock className="mx-auto mb-2 h-6 w-6 text-gray-300" />
+            <p className="text-sm text-gray-400">No evidence attached to this goal yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {evidence.map(record => (
+              <EvidenceCard key={record.id} record={record} />
             ))}
           </div>
         )}
