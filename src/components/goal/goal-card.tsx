@@ -2,9 +2,9 @@ import Link from "next/link"
 import { ArrowUpRight, BarChart2 } from "lucide-react"
 import { GoalStatusBadge } from "./goal-status-badge"
 import { TrustBadge } from "./trust-badge"
-import type { GoalWithKPICount } from "@/lib/goal-data"
+import type { GoalWithCounts } from "@/lib/goal-data"
 
-export function GoalCard({ goal }: { goal: GoalWithKPICount }) {
+export function GoalCard({ goal }: { goal: GoalWithCounts }) {
   return (
     <Link
       href={`/goals/${goal.id}`}

@@ -10,7 +10,8 @@ export type TrustLevel =
   | 'system_verified'
   | 'locked_proof'
 
-export type GoalWithKPICount = {
+// Renamed from GoalWithKPICount — now includes hierarchy + owner + task counts
+export type GoalWithCounts = {
   id: string
   workspace_id: string
   title: string
@@ -20,8 +21,16 @@ export type GoalWithKPICount = {
   trust_level: TrustLevel
   start_date: string | null
   end_date: string | null
+  parent_goal_id: string | null
+  owner_name: string | null
   kpi_count: number
+  sub_goal_count: number
+  task_count: number
+  task_done_count: number
 }
+
+// Kept for backwards compat — dashboard GoalCard uses this alias
+export type GoalWithKPICount = GoalWithCounts
 
 export type LinkedKPI = {
   id: string
@@ -48,7 +57,7 @@ export type EvidenceRecord = {
 }
 
 export type GoalDetailData = {
-  goal: GoalWithKPICount
+  goal: GoalWithCounts
   kpis: LinkedKPI[]
   evidence: EvidenceRecord[]
 }
@@ -63,7 +72,7 @@ async function getWorkspaceId(): Promise<string | null> {
   return data?.workspace_id ?? null
 }
 
-export async function fetchWorkspaceGoals(): Promise<GoalWithKPICount[]> {
+export async function fetchWorkspaceGoals(): Promise<GoalWithCounts[]> {
   const workspaceId = await getWorkspaceId()
   if (!workspaceId) return []
 
@@ -71,7 +80,9 @@ export async function fetchWorkspaceGoals(): Promise<GoalWithKPICount[]> {
 
   const { data: goals } = await supabase
     .from('goals')
-    .select('id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date')
+    .select(
+      'id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date, parent_goal_id, owner:workspace_members!owner_id(display_name)'
+    )
     .eq('workspace_id', workspaceId)
     .order('created_at', { ascending: false })
 
@@ -79,23 +90,48 @@ export async function fetchWorkspaceGoals(): Promise<GoalWithKPICount[]> {
 
   const goalIds = goals.map(g => g.id)
 
-  const { data: kpiRows } = await supabase
-    .from('kpis')
-    .select('goal_id')
-    .in('goal_id', goalIds)
+  // Batch all counts in parallel — no N+1
+  const [kpiRows, subGoalRows, taskRows] = await Promise.all([
+    supabase.from('kpis').select('goal_id').in('goal_id', goalIds),
+    supabase.from('goals').select('parent_goal_id').in('parent_goal_id', goalIds),
+    supabase.from('tasks').select('goal_id, status').in('goal_id', goalIds),
+  ])
 
   const kpiCountMap: Record<string, number> = {}
-  for (const row of kpiRows ?? []) {
+  for (const row of kpiRows.data ?? []) {
+    if (row.goal_id) kpiCountMap[row.goal_id] = (kpiCountMap[row.goal_id] ?? 0) + 1
+  }
+
+  const subGoalCountMap: Record<string, number> = {}
+  for (const row of subGoalRows.data ?? []) {
+    if (row.parent_goal_id) subGoalCountMap[row.parent_goal_id] = (subGoalCountMap[row.parent_goal_id] ?? 0) + 1
+  }
+
+  const taskCountMap: Record<string, { total: number; done: number }> = {}
+  for (const row of taskRows.data ?? []) {
     if (row.goal_id) {
-      kpiCountMap[row.goal_id] = (kpiCountMap[row.goal_id] ?? 0) + 1
+      if (!taskCountMap[row.goal_id]) taskCountMap[row.goal_id] = { total: 0, done: 0 }
+      taskCountMap[row.goal_id].total++
+      if (row.status === 'done') taskCountMap[row.goal_id].done++
     }
   }
 
   return goals.map(g => ({
-    ...g,
+    id: g.id,
+    workspace_id: g.workspace_id,
+    title: g.title,
+    description: g.description,
     status: g.status as GoalStatus,
+    progress_pct: g.progress_pct,
     trust_level: g.trust_level as TrustLevel,
+    start_date: g.start_date,
+    end_date: g.end_date,
+    parent_goal_id: g.parent_goal_id,
+    owner_name: (g.owner as unknown as { display_name: string | null } | null)?.display_name ?? null,
     kpi_count: kpiCountMap[g.id] ?? 0,
+    sub_goal_count: subGoalCountMap[g.id] ?? 0,
+    task_count: taskCountMap[g.id]?.total ?? 0,
+    task_done_count: taskCountMap[g.id]?.done ?? 0,
   }))
 }
 
@@ -120,7 +156,7 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
 
   const { data: goal } = await supabase
     .from('goals')
-    .select('id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date')
+    .select('id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date, parent_goal_id, owner:workspace_members!owner_id(display_name)')
     .eq('id', id)
     .single()
 
@@ -131,38 +167,16 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     .select('id, name, unit, category')
     .eq('goal_id', id)
 
-  if (!kpis || kpis.length === 0) {
-    const { data: evidenceRows } = await supabase
-      .from('evidence')
-      .select('id, title, description, evidence_type, source_url, trust_level, created_at, uploader:workspace_members!uploaded_by(display_name)')
-      .eq('goal_id', id)
-      .order('created_at', { ascending: false })
-      .limit(10)
-
-    return {
-      goal: { ...goal, status: goal.status as GoalStatus, trust_level: goal.trust_level as TrustLevel, kpi_count: 0 },
-      kpis: [],
-      evidence: (evidenceRows ?? []).map(e => ({
-        id: e.id,
-        title: e.title,
-        description: e.description,
-        evidence_type: e.evidence_type as EvidenceType,
-        source_url: e.source_url,
-        trust_level: e.trust_level as TrustLevel,
-        uploader_name: (e.uploader as unknown as { display_name: string | null } | null)?.display_name ?? null,
-        created_at: e.created_at,
-      })),
-    }
-  }
-
-  const kpiIds = kpis.map(k => k.id)
+  const kpiList = kpis ?? []
 
   const [valuesResult, evidenceResult] = await Promise.all([
-    supabase
-      .from('kpi_values')
-      .select('kpi_id, value, recorded_at')
-      .in('kpi_id', kpiIds)
-      .order('recorded_at', { ascending: false }),
+    kpiList.length > 0
+      ? supabase
+          .from('kpi_values')
+          .select('kpi_id, value, recorded_at')
+          .in('kpi_id', kpiList.map(k => k.id))
+          .order('recorded_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
     supabase
       .from('evidence')
       .select('id, title, description, evidence_type, source_url, trust_level, created_at, uploader:workspace_members!uploaded_by(display_name)')
@@ -171,7 +185,7 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
       .limit(10),
   ])
 
-  const linkedKpis: LinkedKPI[] = kpis.map(kpi => {
+  const linkedKpis: LinkedKPI[] = kpiList.map(kpi => {
     const vals = (valuesResult.data ?? []).filter(v => v.kpi_id === kpi.id)
     const sparkline = buildSparkline(vals)
     const current = sparkline[sparkline.length - 1] ?? 0
@@ -203,10 +217,21 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
 
   return {
     goal: {
-      ...goal,
+      id: goal.id,
+      workspace_id: goal.workspace_id,
+      title: goal.title,
+      description: goal.description,
       status: goal.status as GoalStatus,
+      progress_pct: goal.progress_pct,
       trust_level: goal.trust_level as TrustLevel,
-      kpi_count: kpis.length,
+      start_date: goal.start_date,
+      end_date: goal.end_date,
+      parent_goal_id: goal.parent_goal_id,
+      owner_name: (goal.owner as unknown as { display_name: string | null } | null)?.display_name ?? null,
+      kpi_count: kpiList.length,
+      sub_goal_count: 0, // populated on list, not needed on detail
+      task_count: 0,
+      task_done_count: 0,
     },
     kpis: linkedKpis,
     evidence,
