@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Bell, Sparkles } from "lucide-react"
+import { LayoutDashboard, Bell, Sparkles, Target } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/alerts", label: "Alerts", icon: Bell },
-  { href: "/insights", label: "AI Insights", icon: Sparkles },
+  { href: "/",        label: "Dashboard",  icon: LayoutDashboard },
+  { href: "/goals",   label: "Goals",      icon: Target },
+  { href: "/alerts",  label: "Alerts",     icon: Bell },
+  { href: "/insights",label: "AI Insights",icon: Sparkles },
 ]
 
 export function Sidebar() {
@@ -26,7 +27,7 @@ export function Sidebar() {
             href={href}
             className={cn(
               "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              pathname === href
+              (href === "/" ? pathname === href : pathname === href || pathname.startsWith(href + "/"))
                 ? "bg-blue-50 text-blue-700"
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
             )}

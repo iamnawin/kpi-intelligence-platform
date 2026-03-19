@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "insight": { "type": ["string", "null"] },
+    "actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "confidence": { "type": "number" },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "percentageChange": { "type": "number" }
+      },
+      "required": ["percentageChange"]
+    }
+  },
+  "required": ["insight", "actions", "confidence"]
+}
