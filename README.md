@@ -1,4 +1,4 @@
-# 🚀 KPI Intelligence Platform
+# 🚀 ProofPath
 
 > **Understand WHY your KPIs change — not just WHAT changed.**
 
