@@ -254,7 +254,7 @@ The end state: a portable, permissioned **proof graph** of human contribution �
 <div align="center">
 
 ```
- [ BUILT BY NAVEEN ]  ·  AI + PRODUCT + SALESFORCE
+ [ BUILT BY NAVEEN ]  ·  AI + PRODUCT 
 ```
 
 *ProofPath is in active development. Star the repo if the vision resonates.*
