@@ -43,6 +43,16 @@ export type LinkedKPI = {
   changePercent: number
 }
 
+export type TaskStatus = 'todo' | 'in_progress' | 'blocked' | 'done' | 'cancelled'
+
+export type TaskRecord = {
+  id: string
+  title: string
+  status: TaskStatus
+  assignee_name: string | null
+  due_date: string | null
+}
+
 export type EvidenceType = 'note' | 'link' | 'file' | 'metric'
 
 export type EvidenceRecord = {
@@ -60,6 +70,7 @@ export type GoalDetailData = {
   goal: GoalWithCounts
   kpis: LinkedKPI[]
   evidence: EvidenceRecord[]
+  tasks: TaskRecord[]
 }
 
 async function getWorkspaceId(): Promise<string | null> {
@@ -169,7 +180,7 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
 
   const kpiList = kpis ?? []
 
-  const [valuesResult, evidenceResult] = await Promise.all([
+  const [valuesResult, evidenceResult, tasksResult] = await Promise.all([
     kpiList.length > 0
       ? supabase
           .from('kpi_values')
@@ -183,6 +194,11 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
       .eq('goal_id', id)
       .order('created_at', { ascending: false })
       .limit(10),
+    supabase
+      .from('tasks')
+      .select('id, title, status, due_date, assignee:workspace_members!assignee_id(display_name)')
+      .eq('goal_id', id)
+      .order('created_at', { ascending: true }),
   ])
 
   const linkedKpis: LinkedKPI[] = kpiList.map(kpi => {
@@ -215,6 +231,14 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     created_at: e.created_at,
   }))
 
+  const tasks: TaskRecord[] = (tasksResult.data ?? []).map(t => ({
+    id: t.id,
+    title: t.title,
+    status: t.status as TaskStatus,
+    assignee_name: (t.assignee as unknown as { display_name: string | null } | null)?.display_name ?? null,
+    due_date: t.due_date,
+  }))
+
   return {
     goal: {
       id: goal.id,
@@ -235,5 +259,6 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     },
     kpis: linkedKpis,
     evidence,
+    tasks,
   }
 }

@@ -5,6 +5,8 @@ import { fetchGoalById } from "@/lib/goal-data"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { TrustBadge } from "@/components/goal/trust-badge"
 import { EvidenceCard } from "@/components/goal/evidence-card"
+import { TaskRow } from "@/components/goal/task-row"
+import { CheckSquare } from "lucide-react"
 import { TrendBadge } from "@/components/kpi/trend-badge"
 import { formatNumber } from "@/lib/utils"
 
@@ -15,7 +17,7 @@ export default async function GoalDetailPage({ params }: Props) {
   const data = await fetchGoalById(id)
   if (!data) notFound()
 
-  const { goal, kpis, evidence } = data
+  const { goal, kpis, evidence, tasks } = data
 
   return (
     <div>
@@ -56,6 +58,33 @@ export default async function GoalDetailPage({ params }: Props) {
           <p className="mt-3 text-xs text-gray-400">
             {goal.start_date ?? '—'} → {goal.end_date ?? 'ongoing'}
           </p>
+        )}
+      </div>
+
+      {/* Tasks */}
+      <div className="mt-6">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+          Tasks ({tasks.length})
+          {tasks.length > 0 && (
+            <span className="ml-2 font-normal normal-case text-gray-400">
+              — {tasks.filter(t => t.status === 'done').length} of {tasks.length} done
+            </span>
+          )}
+        </h2>
+
+        {tasks.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center">
+            <CheckSquare className="mx-auto mb-2 h-6 w-6 text-gray-300" />
+            <p className="text-sm text-gray-400">No tasks linked to this goal yet.</p>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+            <div className="divide-y divide-gray-100">
+              {tasks.map(task => (
+                <TaskRow key={task.id} task={task} />
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
