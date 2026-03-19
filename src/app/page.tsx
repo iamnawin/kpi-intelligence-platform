@@ -1,15 +1,16 @@
-import { mockKPIs } from "@/lib/mock-data"
+import { fetchKPIs } from "@/lib/api"
 import { HeroKPI } from "@/components/kpi/hero-kpi"
 import { KPICard } from "@/components/kpi/kpi-card"
 import { KPISection } from "@/components/kpi/kpi-section"
 import { AIInsightStrip } from "@/components/dashboard/ai-insight-strip"
 
-const heroKPI = mockKPIs.find((k) => k.id === "revenue")!
-const primary = mockKPIs.filter((k) => ["mrr-growth", "nps"].includes(k.id))
-const customer = mockKPIs.filter((k) => ["churn", "cac"].includes(k.id))
-const operational = mockKPIs.filter((k) => ["support-tickets"].includes(k.id))
+export default async function DashboardPage() {
+  const kpis = await fetchKPIs()
 
-export default function DashboardPage() {
+  const heroKPI = kpis.find((k) => k.id === "revenue")!
+  const primary = kpis.filter((k) => ["mrr-growth", "nps"].includes(k.id))
+  const customer = kpis.filter((k) => ["churn", "cac"].includes(k.id))
+  const operational = kpis.filter((k) => ["support-tickets"].includes(k.id))
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}

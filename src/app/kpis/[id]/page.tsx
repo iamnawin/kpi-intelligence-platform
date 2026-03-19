@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, BarChart2 } from "lucide-react"
+import { ArrowLeft, BarChart2, Sparkles, ShieldCheck } from "lucide-react"
 import { mockKPIs } from "@/lib/mock-data"
+import { evaluateKPI } from "@/lib/api"
 import { TrendBadge } from "@/components/kpi/trend-badge"
 import { formatNumber } from "@/lib/utils"
 
@@ -14,6 +15,19 @@ export default async function KPIDetailPage({ params }: Props) {
   const kpi = mockKPIs.find((k) => k.id === id)
 
   if (!kpi) notFound()
+
+  let engineResult = null
+  try {
+    engineResult = await evaluateKPI({
+      kpi: kpi.name,
+      current_value: kpi.sparkline[kpi.sparkline.length - 1],
+      previous_value: kpi.sparkline[0],
+      threshold: 5,
+      context: { region: "Global", team: kpi.category },
+    })
+  } catch {
+    // graceful degradation — engine unavailable
+  }
 
   return (
     <div>
@@ -38,11 +52,11 @@ export default async function KPIDetailPage({ params }: Props) {
         <p className="mt-1 text-sm text-gray-400">Current value</p>
       </div>
 
-      {/* Chart placeholder — Step 2 will replace with Recharts */}
-      <div className="rounded-xl border border-dashed border-gray-300 bg-white p-6">
+      {/* Sparkline chart */}
+      <div className="mb-6 rounded-xl border border-dashed border-gray-300 bg-white p-6">
         <div className="flex items-center gap-2 text-gray-400 mb-4">
           <BarChart2 className="h-5 w-5" />
-          <span className="text-sm font-medium">Trend chart — coming in Step 2</span>
+          <span className="text-sm font-medium">Trend (last 7 periods)</span>
         </div>
         <div className="flex h-40 items-end gap-1.5">
           {kpi.sparkline.map((point, i) => {
@@ -58,6 +72,39 @@ export default async function KPIDetailPage({ params }: Props) {
           })}
         </div>
       </div>
+
+      {/* Engine insight */}
+      {engineResult && (
+        <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-blue-500" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-500">
+              KPI Engine · Analysis
+            </p>
+          </div>
+
+          {engineResult.insight && (
+            <p className="text-sm text-blue-800">{engineResult.insight}</p>
+          )}
+
+          {engineResult.actions.length > 0 && (
+            <ul className="space-y-1">
+              {engineResult.actions.map((action, i) => (
+                <li key={i} className="text-sm text-blue-700">
+                  · {action}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="flex items-center gap-1.5 pt-1">
+            <ShieldCheck className="h-3.5 w-3.5 text-blue-400" />
+            <span className="text-xs text-blue-400">
+              Confidence: {Math.round(engineResult.confidence * 100)}%
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

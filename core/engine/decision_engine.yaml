@@ -1,0 +1,33 @@
+version: 1
+
+input:
+  kpi: "sales"
+  current_value: 12000
+  previous_value: 15000
+  context:
+    region: "Texas"
+    team: "Retail"
+    timeframe: "last_7_days"
+
+analysis:
+  method: "percentage_change"
+  threshold: 10
+
+reasoning:
+  checks:
+    - id: "visit_completion"
+      expected: ">=80%"
+    - id: "inventory_levels"
+      expected: "in_stock"
+    - id: "rep_activity"
+      expected: "active"
+
+output:
+  insight_template: "Sales dropped {{change}}% in {{region}}"
+  recommendation_templates:
+    - "Increase rep visits in affected stores"
+    - "Audit inventory for stockouts"
+    - "Review rep performance metrics"
+
+metadata:
+  confidence_strategy: "rule_based"
