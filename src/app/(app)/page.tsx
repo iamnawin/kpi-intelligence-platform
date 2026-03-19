@@ -1,11 +1,20 @@
 import { fetchWorkspaceKPIs } from "@/lib/kpi-data"
+import { fetchWorkspaceGoals } from "@/lib/goal-data"
 import { HeroKPI } from "@/components/kpi/hero-kpi"
 import { KPICard } from "@/components/kpi/kpi-card"
 import { KPISection } from "@/components/kpi/kpi-section"
 import { AIInsightStrip } from "@/components/dashboard/ai-insight-strip"
+import { GoalCard } from "@/components/goal/goal-card"
 
 export default async function DashboardPage() {
-  const kpis = await fetchWorkspaceKPIs()
+  const [kpis, goals] = await Promise.all([
+    fetchWorkspaceKPIs(),
+    fetchWorkspaceGoals(),
+  ])
+
+  const activeGoals = goals
+    .filter(g => g.status === 'in_progress' || g.status === 'at_risk')
+    .slice(0, 3)
 
   // Hero: first revenue KPI, or first KPI overall
   const heroKPI = kpis.find(k => k.category === 'revenue') ?? kpis[0]
@@ -55,6 +64,19 @@ export default async function DashboardPage() {
       {customer.length > 0 && <KPISection title="Customer" kpis={customer} />}
 
       {operational.length > 0 && <KPISection title="Operational" kpis={operational} />}
+
+      {activeGoals.length > 0 && (
+        <section>
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+            Active Goals
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {activeGoals.map(goal => (
+              <GoalCard key={goal.id} goal={goal} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
