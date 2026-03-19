@@ -231,4 +231,4 @@ ProofPath is built for the world where work is distributed, careers are non-line
 
 ---
 
-Built by **Naveen** — AI + Product + Salesforce
+Built by **Naveen** — AI + Product 
