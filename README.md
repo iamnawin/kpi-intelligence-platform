@@ -142,7 +142,7 @@ Ideas, feedback, and improvements are welcome.
 ## 📌 Author
 
 Built by Naveen
-AI + Product + Salesforce enthusiast
+
 
 ---
 
