@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { evaluateKpi } = require('../../core/engine/evaluateKpi');
 const { generateExplanation } = require('../../core/ai/explanation.stub');
 const { kpiToConfig } = require('../adapters/kpi-to-config');
+const { supabaseAdmin } = require('../lib/supabase-admin');
 
 const router = Router();
 
@@ -16,8 +17,9 @@ const KPI_DEFINITIONS = [
 ];
 
 // POST /api/evaluate — evaluate a single KPI payload
+// Optional body fields: workspace_id, kpi_id — when present, persists insight to DB
 router.post('/evaluate', (req, res) => {
-  const { kpi, current_value, previous_value } = req.body;
+  const { kpi, current_value, previous_value, workspace_id, kpi_id } = req.body;
 
   if (!kpi || current_value === undefined || previous_value === undefined) {
     return res.status(400).json({
@@ -28,6 +30,22 @@ router.post('/evaluate', (req, res) => {
   const config = kpiToConfig(req.body);
   const result = evaluateKpi(config);
   const explanation = generateExplanation(result, config);
+
+  // Persist insight to DB when workspace context is provided (fire-and-forget)
+  if (workspace_id && kpi_id && result.insight) {
+    supabaseAdmin
+      .from('insights')
+      .insert({
+        workspace_id,
+        kpi_id,
+        insight_type: 'engine_evaluation',
+        content: result.insight,
+        confidence: result.confidence,
+        engine_version: '1.0',
+      })
+      .then(() => {})
+      .catch(() => {});
+  }
 
   res.json({ ...result, explanation });
 });
