@@ -1,14 +1,15 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, BarChart2, Lock } from "lucide-react"
+import { ArrowLeft, BarChart2, Lock, Pencil, CheckSquare } from "lucide-react"
 import { fetchGoalById } from "@/lib/goal-data"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { TrustBadge } from "@/components/goal/trust-badge"
 import { EvidenceCard } from "@/components/goal/evidence-card"
 import { TaskRow } from "@/components/goal/task-row"
-import { CheckSquare } from "lucide-react"
+import { TaskForm } from "@/components/forms/task-form"
 import { TrendBadge } from "@/components/kpi/trend-badge"
 import { formatNumber } from "@/lib/utils"
+import { createTask } from "@/app/actions/task-actions"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -36,9 +37,18 @@ export default async function GoalDetailPage({ params }: Props) {
             <p className="mt-1 text-sm text-gray-500">{goal.description}</p>
           )}
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          <GoalStatusBadge status={goal.status} />
-          <TrustBadge level={goal.trust_level} />
+        <div className="flex shrink-0 items-center gap-3">
+          <div className="flex flex-col items-end gap-2">
+            <GoalStatusBadge status={goal.status} />
+            <TrustBadge level={goal.trust_level} />
+          </div>
+          <Link
+            href={`/goals/${goal.id}/edit`}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Edit
+          </Link>
         </div>
       </div>
 
@@ -86,6 +96,7 @@ export default async function GoalDetailPage({ params }: Props) {
             </div>
           </div>
         )}
+        <TaskForm action={createTask.bind(null, goal.id)} />
       </div>
 
       {/* Linked KPIs */}
