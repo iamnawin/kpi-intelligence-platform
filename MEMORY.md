@@ -98,6 +98,26 @@ Working name during early development: *KPI Intelligence Platform*.
 - `/goals/new` + `/goals/[id]/edit` pages created
 - Goals list: "New Goal" button; Goal detail: "Edit" button + inline TaskForm
 
+### Milestone 10 — Phase C: CSV/JSON Goal Import (committed 2026-03-21)
+- `src/lib/import-parser.ts`: `parseCSV` (quoted-field support), `parseJSON` (array or `{ goals: [...] }`), `validateImportRows` (status/type enum + progress range checks)
+- `src/app/actions/import-actions.ts`: `importGoals` Server Action — batch insert up to 100 rows, returns `{ inserted, errors }`, calls `revalidatePath('/goals')`
+- `src/components/forms/import-form.tsx`: 3-step wizard (Upload file/paste → Preview table → Done result card)
+- `src/app/(app)/goals/import/page.tsx`: `/goals/import` route
+- `src/app/(app)/goals/page.tsx`: "Import" button added next to "New Goal"
+- **Pushed to GitHub main** (commit `3c8d239`)
+
+### Milestone 10 — Phase B: OKR Structure (committed 2026-03-21)
+- `supabase/migrations/006_okr_extensions.sql`: ENUMs `goal_type`, `key_result_type`; added columns to goals + objectives
+- `src/lib/goal-data.ts`: extended `GoalWithCounts` with `objective_id`, `goal_type`, `kr_type`, `target_value`, `current_value`, `unit`
+- `src/lib/objective-data.ts`: `ObjectiveWithKRs`, `fetchWorkspaceObjectives`, `fetchObjectiveById`
+- `src/components/okr/`: `GoalTypeBadge`, `ProgressRing` (SVG circle), `ObjectiveCard`, `ObjectiveRow`, `KeyResultRow`
+- `src/components/forms/objective-form.tsx`: create/edit objective
+- `src/app/actions/objective-actions.ts`: `createObjective`, `updateObjective` Server Actions
+- `src/app/(app)/objectives/`: list, new, `[id]` detail, `[id]/edit` pages
+- `GoalForm` extended: goal_type select, "Link to Objective" toggle, kr_type, metric fields
+- Test fixtures updated with new required GoalWithCounts fields; 83 tests passing
+- **Pushed to GitHub main**
+
 ### Milestone 10 — Phase A: Dark Theme (committed 2026-03-21)
 - `tailwind.config.ts`: added `darkMode: 'class'`
 - `globals.css`: `.dark` CSS variables (`#09090b` bg, `#fafafa` text)
@@ -116,7 +136,7 @@ Working name during early development: *KPI Intelligence Platform*.
 
 ## Current Status
 
-**Phase**: M10 Phase A (dark theme) shipped — Phase B next (OKR structure)
+**Phase**: M10 Phases A+B+C shipped — Phase D (Integrations) next
 
 **Auth flow**:
 ```
@@ -136,10 +156,8 @@ Working name during early development: *KPI Intelligence Platform*.
 - 83 passing tests
 
 **M10 Phases Remaining**:
-- Phase B: OKR structure — Objectives with typed Key Results, goal_type enum, DB migration 006
-- Phase C: Import — CSV/JSON wizard at `/goals/import`
-- Phase D: Integrations — Jira, Linear, Asana, GitHub OAuth + sync
-- Phase E: Personalized dashboard — Personal / Team / Company view modes
+- Phase D: Integrations — Jira, Linear, Asana, GitHub OAuth + sync, DB migration 007
+- Phase E: Personalized dashboard — Personal / Team / Company view modes (URL `?view=` + localStorage)
 
 ---
 
