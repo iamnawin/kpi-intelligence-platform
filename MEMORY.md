@@ -98,6 +98,18 @@ Working name during early development: *KPI Intelligence Platform*.
 - `/goals/new` + `/goals/[id]/edit` pages created
 - Goals list: "New Goal" button; Goal detail: "Edit" button + inline TaskForm
 
+### Milestone 10 — Phase D: External Integrations (committed 2026-03-21)
+- `supabase/migrations/007_integrations.sql`: `workspace_integrations` table, `external_id/source/external_url` on tasks
+- `src/lib/integrations/`: `types.ts`, `jira.ts` (REST v3), `linear.ts` (GraphQL), `asana.ts` (REST), `github.ts` (REST)
+- `src/app/api/integrations/[provider]/authorize/route.ts`: OAuth redirect (Jira/Linear/Asana/GitHub)
+- `src/app/api/integrations/[provider]/callback/route.ts`: token exchange + upsert
+- `src/app/api/integrations/[provider]/sync/route.ts`: task upsert dedup on `(workspace_id,source,external_id)`, 5-min cooldown
+- `src/components/integrations/integration-card.tsx`: Sync Now / Connect / Reconnect card
+- `src/app/(app)/settings/integrations/page.tsx`: integrations dashboard page
+- `src/components/layout/sidebar.tsx`: added Integrations nav item
+- **Env vars required**: `JIRA_CLIENT_ID`, `LINEAR_CLIENT_ID`, `ASANA_CLIENT_ID`, `GITHUB_CLIENT_ID` + secrets + `NEXT_PUBLIC_APP_URL`
+- **Pushed to GitHub main** (commit `838bd5b`)
+
 ### Milestone 10 — Phase C: CSV/JSON Goal Import (committed 2026-03-21)
 - `src/lib/import-parser.ts`: `parseCSV` (quoted-field support), `parseJSON` (array or `{ goals: [...] }`), `validateImportRows` (status/type enum + progress range checks)
 - `src/app/actions/import-actions.ts`: `importGoals` Server Action — batch insert up to 100 rows, returns `{ inserted, errors }`, calls `revalidatePath('/goals')`
@@ -136,7 +148,7 @@ Working name during early development: *KPI Intelligence Platform*.
 
 ## Current Status
 
-**Phase**: M10 Phases A+B+C shipped — Phase D (Integrations) next
+**Phase**: M10 Phases A+B+C+D shipped — Phase E (Personalized Dashboard) next
 
 **Auth flow**:
 ```
@@ -156,8 +168,10 @@ Working name during early development: *KPI Intelligence Platform*.
 - 83 passing tests
 
 **M10 Phases Remaining**:
-- Phase D: Integrations — Jira, Linear, Asana, GitHub OAuth + sync, DB migration 007
 - Phase E: Personalized dashboard — Personal / Team / Company view modes (URL `?view=` + localStorage)
+  - `src/lib/dashboard-data.ts` + `src/lib/auth.ts`
+  - `view-selector.tsx`, `personal-view.tsx`, `team-view.tsx`, `executive-strip.tsx`
+  - Update `/` page to accept `?view=` searchParam
 
 ---
 
