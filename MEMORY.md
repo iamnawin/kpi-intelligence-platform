@@ -60,11 +60,63 @@ Working name during early development: *KPI Intelligence Platform*.
 - Root layout stripped to bare HTML — AppShell now lives only inside `(app)/layout.tsx`
 - Build verified: all 12 routes compile, middleware active (80.7 kB)
 
+### Milestone 5 — KPI Data Layer (Supabase)
+- Created `src/lib/kpi-data.ts` with `fetchWorkspaceKPIs()` and `fetchKPIById()` backed by Supabase
+- Dashboard now reads real KPIs from DB; falls back to mock data when DB is empty
+- KPI detail page tries DB first (UUID route), falls back to mock (slug route)
+
+### Milestone 6 — Goals Layer
+- Created `src/lib/goal-data.ts` with `fetchWorkspaceGoals()`, `fetchGoalById()` + full type definitions
+- `GoalWithCounts`: goal + sub_goal_count, task_count, task_done_count, kpi_count, evidence
+- `GoalRow` component: hierarchical list with depth indentation, status dots, meta row
+- `GoalCard` component: card with progress bar, status + trust badges, KPI count
+- `EvidenceCard` component: type icon, trust badge, source link
+- `TrustBadge` + `GoalStatusBadge` components
+- `/goals` page: hierarchical tree (top-level + sub-goals), sorted by status priority
+- `/goals/[id]` detail page: progress card, linked KPIs with sparklines, evidence grid
+
+### Milestone 7 — Tasks Layer
+- `TaskRecord`, `TaskStatus` types added to `goal-data.ts`
+- `fetchGoalById` extended to return `tasks[]`
+- `TaskRow` component: status icon, assignee, due date, status badge
+- Goal detail page shows Tasks section with task count and done count
+
+### Milestone 8 — Vitest Test Suite
+- Installed Vitest + @testing-library/react + jsdom
+- `vitest.config.ts`: jsdom environment, React plugin, @/ alias
+- `vitest.setup.tsx`: jest-dom + mocks for next/link, next/navigation, server-only
+- 83 tests across 8 test files — all passing:
+  - `utils.test.ts` (11), `trust-badge.test.tsx` (8), `goal-status-badge.test.tsx` (8)
+  - `trend-badge.test.tsx` (7), `goal-card.test.tsx` (8), `goal-row.test.tsx` (12)
+  - `task-row.test.tsx` (11), `evidence-card.test.tsx` (12)
+
+### Milestone 9 — Create/Edit Forms with Server Actions
+- `src/app/actions/goal-actions.ts`: `createGoal` + `updateGoal` Server Actions
+- `src/app/actions/task-actions.ts`: `createTask` Server Action
+- `src/components/forms/goal-form.tsx`: GoalForm client component (create/edit modes)
+- `src/components/forms/task-form.tsx`: collapsible inline task form
+- `/goals/new` + `/goals/[id]/edit` pages created
+- Goals list: "New Goal" button; Goal detail: "Edit" button + inline TaskForm
+
+### Milestone 10 — Phase A: Dark Theme (committed 2026-03-21)
+- `tailwind.config.ts`: added `darkMode: 'class'`
+- `globals.css`: `.dark` CSS variables (`#09090b` bg, `#fafafa` text)
+- `layout.tsx` + `(auth)/layout.tsx`: forced dark via `<html className="dark">`
+- 30 files updated with systematic `dark:` Tailwind variants:
+  - Layout: app-shell, sidebar, filter-bar
+  - Goal components: goal-card, goal-row, task-row, evidence-card
+  - Badges: trust-badge, goal-status-badge (all 6/5 states with dark variants)
+  - KPI: hero-kpi, kpi-card, kpi-section, trend-badge, ai-insight-strip
+  - Forms: goal-form, task-form
+  - Pages: dashboard, goals, goal detail, new/edit goal, kpi detail, alerts, insights, login, signup
+- `npm typecheck`: 0 errors | `npm test`: 83/83 passing
+- **Pushed to GitHub main**
+
 ---
 
 ## Current Status
 
-**Phase**: Workspace + Auth complete — ready for real data integration
+**Phase**: M10 Phase A (dark theme) shipped — Phase B next (OKR structure)
 
 **Auth flow**:
 ```
@@ -77,11 +129,17 @@ Working name during early development: *KPI Intelligence Platform*.
 - Workspace creation with RLS-safe RPC
 - Route protection via Next.js middleware
 - Dashboard shows live KPI data from core engine (falls back to mock)
+- Goals layer: list, detail, create, edit — all with Supabase backend
+- Tasks inline form on goal detail page
+- Evidence cards with trust levels
+- Full dark theme across all pages (forced dark, no toggle)
+- 83 passing tests
 
-**What's next**:
-- Connect KPI engine to real Supabase data (replace mock_data with DB queries)
-- Multi-tenant workspace-scoped KPI management
-- Goals and evidence linking (the core ProofPath value proposition)
+**M10 Phases Remaining**:
+- Phase B: OKR structure — Objectives with typed Key Results, goal_type enum, DB migration 006
+- Phase C: Import — CSV/JSON wizard at `/goals/import`
+- Phase D: Integrations — Jira, Linear, Asana, GitHub OAuth + sync
+- Phase E: Personalized dashboard — Personal / Team / Company view modes
 
 ---
 
