@@ -437,6 +437,87 @@ type ExternalTask = { externalId: string; title: string; status: string; url: st
 
 ---
 
+---
+
+## Phase E — Personalized Dashboard (individual / team / company views)
+
+### Concept
+Once goals, KPIs, and data are configured, the dashboard should show a personalized view
+based on the authenticated user — not a static shared view.
+
+### Three View Modes
+| Mode | Who sees it | Data scope |
+|------|-------------|------------|
+| **Personal** | Individual contributor | Their own goals, tasks assigned to them, KPIs they own |
+| **Team** | Team lead / manager | Team goals, team members' tasks, team KPIs |
+| **Company** | Admin / exec | All goals, all KPIs, workspace-wide rollups |
+
+### Implementation Approach
+
+**E1 — View mode selector (UI)**
+- Add a segmented control to the dashboard header: [Personal · Team · Company]
+- Persist selection in `localStorage` (no auth round-trip needed on page load)
+- Active mode stored in URL query param: `?view=personal|team|company`
+
+**E2 — Data layer filtering**
+```ts
+// src/lib/dashboard-data.ts
+export type DashboardView = 'personal' | 'team' | 'company'
+
+export async function fetchDashboardData(view: DashboardView, userId: string) {
+  // personal: goals.owner_id = userId, tasks.assignee_id = userId
+  // team:     goals in user's team (via workspace_members.team_id)
+  // company:  no filter — full workspace scope
+}
+```
+
+**E3 — Auth context**
+- `src/lib/auth.ts`: `getSession()` → returns `{ userId, workspaceId, teamId, role }`
+- Role determines which views are available (contributor sees Personal only, admin sees all)
+
+**E4 — View-aware header**
+```tsx
+// DashboardPage receives view as a searchParam
+// Shows greeting: "Good morning, {name}" in personal mode
+// Shows "Team · Engineering" in team mode
+// Shows "Company Overview" in company mode
+```
+
+**E5 — Personal mode specifics**
+- "My Goals" section: goals where `owner_id = userId`
+- "My Tasks" section: tasks where `assignee_id = userId`, sorted by due date
+- "My KPIs" section: KPIs linked to user's goals
+
+**E6 — Team mode specifics**
+- Goals filtered to user's `team_id`
+- Team progress rollup: avg progress_pct across team goals
+- Team member mini-list with their goal counts
+
+**E7 — Company mode specifics**
+- Existing dashboard layout (unchanged)
+- Add an "Executive Summary" strip: total goals by status, overall completion %, KPI health
+
+### Files to Create/Modify (Phase E)
+| File | Op | Description |
+|------|----|-------------|
+| `src/lib/dashboard-data.ts` | CREATE | View-aware data fetching |
+| `src/lib/auth.ts` | CREATE | Session + role helper |
+| `src/components/dashboard/view-selector.tsx` | CREATE | Personal/Team/Company toggle |
+| `src/components/dashboard/personal-view.tsx` | CREATE | My Goals + My Tasks sections |
+| `src/components/dashboard/team-view.tsx` | CREATE | Team goals + member rollup |
+| `src/components/dashboard/executive-strip.tsx` | CREATE | Company-mode summary strip |
+| `src/app/(app)/page.tsx` | MODIFY | Accept `?view=` searchParam, render correct view |
+
+### Acceptance Criteria (Phase E)
+- [ ] Default view defaults to Personal for regular users, Company for admins
+- [ ] Switching views re-fetches data without full page reload
+- [ ] Personal view shows only goals/tasks owned by logged-in user
+- [ ] Team view scoped to user's workspace team
+- [ ] Company view shows workspace-wide rollup
+- [ ] View selection persists across navigation (localStorage)
+
+---
+
 ## SESSION_ID (for /ccg:execute)
 - CODEX_SESSION: N/A
 - GEMINI_SESSION: N/A
