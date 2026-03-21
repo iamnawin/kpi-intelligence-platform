@@ -64,7 +64,7 @@ export default async function KPIDetailPage({ params }: Props) {
     <div>
       <Link
         href="/"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Dashboard
@@ -72,20 +72,20 @@ export default async function KPIDetailPage({ params }: Props) {
 
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">{name}</h1>
-          <p className="mt-1 text-sm capitalize text-gray-500">{category}</p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">{name}</h1>
+          <p className="mt-1 text-sm capitalize text-gray-500 dark:text-gray-400">{category}</p>
         </div>
         <TrendBadge trend={trend} changePercent={change} />
       </div>
 
-      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <p className="text-4xl font-bold text-gray-900">{formatNumber(current, unit)}</p>
-        <p className="mt-1 text-sm text-gray-400">Current value</p>
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <p className="text-4xl font-bold text-gray-900 dark:text-gray-50">{formatNumber(current, unit)}</p>
+        <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">Current value</p>
       </div>
 
       {/* Sparkline chart */}
-      <div className="mb-6 rounded-xl border border-dashed border-gray-300 bg-white p-6">
-        <div className="flex items-center gap-2 text-gray-400 mb-4">
+      <div className="mb-6 rounded-xl border border-dashed border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
+        <div className="flex items-center gap-2 text-gray-400 mb-4 dark:text-gray-500">
           <BarChart2 className="h-5 w-5" />
           <span className="text-sm font-medium">Trend (last {sparkline.length} periods)</span>
         </div>
@@ -96,7 +96,7 @@ export default async function KPIDetailPage({ params }: Props) {
             return (
               <div
                 key={i}
-                className="flex-1 rounded-sm bg-blue-100"
+                className="flex-1 rounded-sm bg-blue-100 dark:bg-blue-900"
                 style={{ height: `${height}%` }}
               />
             )
@@ -106,22 +106,22 @@ export default async function KPIDetailPage({ params }: Props) {
 
       {/* Engine insight */}
       {engineResult && (
-        <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 space-y-3">
+        <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 space-y-3 dark:border-blue-900 dark:bg-blue-950">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-blue-500" />
-            <p className="text-xs font-semibold uppercase tracking-wide text-blue-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-500 dark:text-blue-400">
               KPI Engine · Analysis
             </p>
           </div>
 
           {engineResult.insight && (
-            <p className="text-sm text-blue-800">{engineResult.insight}</p>
+            <p className="text-sm text-blue-800 dark:text-blue-300">{engineResult.insight}</p>
           )}
 
           {Array.isArray(engineResult.actions) && engineResult.actions.length > 0 && (
             <ul className="space-y-1">
               {engineResult.actions.map((action, i) => (
-                <li key={i} className="text-sm text-blue-700">
+                <li key={i} className="text-sm text-blue-700 dark:text-blue-300">
                   · {action}
                 </li>
               ))}
@@ -130,7 +130,7 @@ export default async function KPIDetailPage({ params }: Props) {
 
           <div className="flex items-center gap-1.5 pt-1">
             <ShieldCheck className="h-3.5 w-3.5 text-blue-400" />
-            <span className="text-xs text-blue-400">
+            <span className="text-xs text-blue-400 dark:text-blue-500">
               Confidence: {Math.round(engineResult.confidence * 100)}%
             </span>
           </div>

@@ -23,7 +23,7 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
     <form action={action} className="flex max-w-xl flex-col gap-5">
       {/* Title */}
       <div>
-        <label htmlFor="title" className="mb-1 block text-sm font-medium text-gray-700">
+        <label htmlFor="title" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
           Title <span className="text-red-500">*</span>
         </label>
         <input
@@ -33,13 +33,13 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
           required
           defaultValue={goal?.title ?? ''}
           placeholder="e.g. Grow MRR to $300k"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
         />
       </div>
 
       {/* Description */}
       <div>
-        <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">
+        <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
           Description
         </label>
         <textarea
@@ -48,21 +48,21 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
           rows={3}
           defaultValue={goal?.description ?? ''}
           placeholder="Optional context or outcome..."
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
         />
       </div>
 
       {/* Status + Progress */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="status" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="status" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Status
           </label>
           <select
             id="status"
             name="status"
             defaultValue={goal?.status ?? 'not_started'}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           >
             {STATUS_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -71,7 +71,7 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
         </div>
 
         <div>
-          <label htmlFor="progress_pct" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="progress_pct" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Progress (%)
           </label>
           <input
@@ -81,7 +81,7 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
             min={0}
             max={100}
             defaultValue={goal?.progress_pct ?? 0}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
       </div>
@@ -89,7 +89,7 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
       {/* Dates */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="start_date" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="start_date" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Start Date
           </label>
           <input
@@ -97,12 +97,12 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
             name="start_date"
             type="date"
             defaultValue={goal?.start_date ?? ''}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label htmlFor="end_date" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="end_date" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             End Date
           </label>
           <input
@@ -110,7 +110,7 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
             name="end_date"
             type="date"
             defaultValue={goal?.end_date ?? ''}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
       </div>
@@ -125,7 +125,7 @@ export function GoalForm({ mode, goal, action }: GoalFormProps) {
         </button>
         <a
           href={cancelHref}
-          className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+          className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
         >
           Cancel
         </a>

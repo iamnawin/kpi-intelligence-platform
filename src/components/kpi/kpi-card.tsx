@@ -8,16 +8,16 @@ export function KPICard({ kpi }: { kpi: KPI }) {
   return (
     <Link
       href={`/kpis/${kpi.id}`}
-      className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-blue-900"
     >
       <div className="mb-3 flex items-start justify-between">
-        <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
+        <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200">
           {kpi.name}
         </p>
         <ArrowUpRight className="h-3.5 w-3.5 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
       </div>
 
-      <p className="mb-1 text-3xl font-bold tracking-tight text-gray-900">
+      <p className="mb-1 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
         {formatNumber(kpi.value, kpi.unit)}
       </p>
 
@@ -35,7 +35,7 @@ export function KPICard({ kpi }: { kpi: KPI }) {
             <div
               key={i}
               className={`flex-1 rounded-sm transition-colors ${
-                isLast ? "bg-blue-400" : "bg-blue-100 group-hover:bg-blue-200"
+                isLast ? "bg-blue-400" : "bg-blue-100 group-hover:bg-blue-200 dark:bg-blue-900 dark:group-hover:bg-blue-800"
               }`}
               style={{ height: `${height}px` }}
             />

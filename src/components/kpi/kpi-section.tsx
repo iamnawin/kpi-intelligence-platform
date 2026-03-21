@@ -9,7 +9,7 @@ type Props = {
 export function KPISection({ title, kpis }: Props) {
   return (
     <section>
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
         {title}
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

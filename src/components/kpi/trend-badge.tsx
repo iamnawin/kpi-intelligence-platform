@@ -30,7 +30,7 @@ export function TrendBadge({ trend, changePercent }: Props) {
   }
 
   return (
-    <span className="inline-flex items-center gap-1 text-sm font-medium text-gray-500">
+    <span className="inline-flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400">
       <Minus className="h-4 w-4" />
       {label}
     </span>

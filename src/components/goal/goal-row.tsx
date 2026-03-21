@@ -29,8 +29,8 @@ export function GoalRow({ goal, depth = 0 }: Props) {
   return (
     <Link
       href={`/goals/${goal.id}`}
-      className={`group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 ${
-        depth > 0 ? 'pl-10 border-l-2 border-gray-100' : ''
+      className={`group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 dark:hover:bg-gray-800 ${
+        depth > 0 ? 'pl-10 border-l-2 border-gray-100 dark:border-gray-800' : ''
       }`}
     >
       {/* Status dot */}
@@ -42,7 +42,7 @@ export function GoalRow({ goal, depth = 0 }: Props) {
       <div className="min-w-0 flex-1">
         {/* Title + badges */}
         <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-medium text-gray-800 group-hover:text-gray-900">
+          <p className="text-sm font-medium text-gray-800 group-hover:text-gray-900 dark:text-gray-200 dark:group-hover:text-gray-50">
             {goal.title}
           </p>
           <div className="flex shrink-0 items-center gap-1.5">
@@ -54,7 +54,7 @@ export function GoalRow({ goal, depth = 0 }: Props) {
 
         {/* Meta row: owner · due date · counts */}
         {hasMeta && (
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-400">
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-400 dark:text-gray-500">
             {goal.owner_name && (
               <span className="flex items-center gap-1">
                 <User className="h-3 w-3" aria-hidden="true" />
@@ -88,13 +88,13 @@ export function GoalRow({ goal, depth = 0 }: Props) {
         {/* Progress bar — secondary, only shown when non-zero */}
         {goal.progress_pct > 0 && (
           <div className="mt-2 flex items-center gap-2">
-            <div className="h-1 w-24 rounded-full bg-gray-100">
+            <div className="h-1 w-24 rounded-full bg-gray-100 dark:bg-gray-800">
               <div
                 className="h-1 rounded-full bg-blue-300"
                 style={{ width: `${goal.progress_pct}%` }}
               />
             </div>
-            <span className="text-xs text-gray-400">{goal.progress_pct}%</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">{goal.progress_pct}%</span>
           </div>
         )}
       </div>

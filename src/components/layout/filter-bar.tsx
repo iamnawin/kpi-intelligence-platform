@@ -6,10 +6,10 @@ const TEAMS = ["All Teams", "Sales", "Engineering", "Support", "Marketing"]
 
 export function FilterBar() {
   return (
-    <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 bg-white px-6 py-3">
-      <span className="text-sm font-medium text-gray-500">Filters:</span>
+    <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 bg-white px-6 py-3 dark:border-gray-800 dark:bg-gray-900">
+      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Filters:</span>
       <select
-        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
         defaultValue={DATE_RANGES[1]}
         aria-label="Date range"
       >
@@ -18,7 +18,7 @@ export function FilterBar() {
         ))}
       </select>
       <select
-        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
         defaultValue={REGIONS[0]}
         aria-label="Region"
       >
@@ -27,7 +27,7 @@ export function FilterBar() {
         ))}
       </select>
       <select
-        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
         defaultValue={TEAMS[0]}
         aria-label="Team"
       >

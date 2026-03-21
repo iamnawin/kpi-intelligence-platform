@@ -33,12 +33,12 @@ export function TaskRow({ task }: { task: TaskRecord }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className={`text-sm ${isDone ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+        <p className={`text-sm ${isDone ? 'line-through text-gray-400 dark:text-gray-600' : 'text-gray-700 dark:text-gray-300'}`}>
           {task.title}
         </p>
 
         {(task.assignee_name || dueDate) && (
-          <div className="mt-0.5 flex items-center gap-x-3 text-xs text-gray-400">
+          <div className="mt-0.5 flex items-center gap-x-3 text-xs text-gray-400 dark:text-gray-500">
             {task.assignee_name && (
               <span className="flex items-center gap-1">
                 <User className="h-3 w-3" aria-hidden="true" />
@@ -56,11 +56,11 @@ export function TaskRow({ task }: { task: TaskRecord }) {
       </div>
 
       <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-        task.status === 'done'        ? 'bg-green-50 text-green-600' :
-        task.status === 'in_progress' ? 'bg-blue-50 text-blue-600' :
-        task.status === 'blocked'     ? 'bg-red-50 text-red-500' :
-        task.status === 'cancelled'   ? 'bg-gray-100 text-gray-400' :
-                                        'bg-gray-100 text-gray-500'
+        task.status === 'done'        ? 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-400' :
+        task.status === 'in_progress' ? 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400' :
+        task.status === 'blocked'     ? 'bg-red-50 text-red-500 dark:bg-red-950 dark:text-red-400' :
+        task.status === 'cancelled'   ? 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500' :
+                                        'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
       }`}>
         {STATUS_LABEL[task.status]}
       </span>

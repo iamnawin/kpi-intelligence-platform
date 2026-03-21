@@ -18,7 +18,7 @@ export function EvidenceCard({ record }: { record: EvidenceRecord }) {
   const TypeIcon = typeConfig.icon
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${typeConfig.className}`}>
@@ -29,10 +29,10 @@ export function EvidenceCard({ record }: { record: EvidenceRecord }) {
         <TrustBadge level={record.trust_level} />
       </div>
 
-      <p className="mb-1 text-sm font-medium text-gray-800">{record.title}</p>
+      <p className="mb-1 text-sm font-medium text-gray-800 dark:text-gray-200">{record.title}</p>
 
       {record.description && (
-        <p className="mb-3 text-sm text-gray-500 line-clamp-2">{record.description}</p>
+        <p className="mb-3 text-sm text-gray-500 line-clamp-2 dark:text-gray-400">{record.description}</p>
       )}
 
       {record.evidence_type === 'link' && record.source_url && (
@@ -40,14 +40,14 @@ export function EvidenceCard({ record }: { record: EvidenceRecord }) {
           href={record.source_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mb-3 flex items-center gap-1 text-xs text-blue-600 hover:underline"
+          className="mb-3 flex items-center gap-1 text-xs text-blue-600 hover:underline dark:text-blue-400"
         >
           <ExternalLink className="h-3 w-3" aria-hidden="true" />
           <span className="truncate">{record.source_url}</span>
         </a>
       )}
 
-      <div className="flex items-center gap-1.5 text-xs text-gray-400">
+      <div className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500">
         {record.uploader_name && (
           <>
             <span>{record.uploader_name}</span>

@@ -42,10 +42,10 @@ export default function SignupPage() {
 
   if (sent) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm text-center">
+      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm text-center dark:border-gray-800 dark:bg-gray-900">
         <div className="mb-3 text-3xl">📬</div>
-        <h2 className="text-lg font-semibold text-gray-900">Check your email</h2>
-        <p className="mt-2 text-sm text-gray-500">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">Check your email</h2>
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           We sent a confirmation link to <strong>{email}</strong>. Click it to
           activate your account and set up your workspace.
         </p>
@@ -54,15 +54,15 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Create account</h1>
-        <p className="mt-1 text-sm text-gray-500">Start your ProofPath workspace</p>
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-50">Create account</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Start your ProofPath workspace</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
+          <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Email
           </label>
           <input
@@ -70,13 +70,13 @@ export default function SignupPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="you@company.com"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
+          <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Password
           </label>
           <input
@@ -85,13 +85,13 @@ export default function SignupPage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="Min. 8 characters"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
+          <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
             Confirm password
           </label>
           <input
@@ -99,7 +99,7 @@ export default function SignupPage() {
             required
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"
           />
         </div>
 
@@ -118,9 +118,9 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-gray-500">
+      <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-blue-600 hover:underline">
+        <Link href="/login" className="font-medium text-blue-600 hover:underline dark:text-blue-400">
           Sign in
         </Link>
       </p>

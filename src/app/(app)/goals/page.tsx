@@ -35,8 +35,8 @@ export default async function GoalsPage() {
     <div className="flex flex-col gap-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Goals</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Goals</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Business objectives and outcomes across your workspace.
           </p>
         </div>
@@ -51,13 +51,13 @@ export default async function GoalsPage() {
 
       {goals.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 py-16 text-center">
-          <Target className="mb-3 h-8 w-8 text-gray-300" />
-          <p className="text-sm font-medium text-gray-500">No goals yet</p>
-          <p className="mt-1 text-xs text-gray-400">Add goals in Supabase to see them here.</p>
+          <Target className="mb-3 h-8 w-8 text-gray-300 dark:text-gray-600" />
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">No goals yet</p>
+          <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">Add goals in Supabase to see them here.</p>
         </div>
       ) : (
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-          <div className="divide-y divide-gray-100">
+        <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {topLevel.map(goal => (
               <div key={goal.id}>
                 <GoalRow goal={goal} depth={0} />

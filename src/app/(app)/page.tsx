@@ -33,8 +33,8 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">KPI Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">KPI Dashboard</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Overview of key performance indicators across your business.
         </p>
       </div>
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
 
       {heroKPI && (
         <section>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
             Headline
           </h2>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
 
       {activeGoals.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
             Active Goals
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

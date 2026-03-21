@@ -18,18 +18,18 @@ export default async function EditGoalPage({ params }: Props) {
     <div>
       <Link
         href={`/goals/${id}`}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Goal
       </Link>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Edit Goal</h1>
-        <p className="mt-1 text-sm text-gray-500 line-clamp-1">{data.goal.title}</p>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Edit Goal</h1>
+        <p className="mt-1 text-sm text-gray-500 line-clamp-1 dark:text-gray-400">{data.goal.title}</p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <GoalForm mode="edit" goal={data.goal} action={boundUpdateGoal} />
       </div>
     </div>
