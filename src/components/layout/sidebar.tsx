@@ -2,14 +2,15 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Bell, Sparkles, Target } from "lucide-react"
+import { LayoutDashboard, Bell, Sparkles, Target, CircleDot } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { href: "/",        label: "Dashboard",  icon: LayoutDashboard },
-  { href: "/goals",   label: "Goals",      icon: Target },
-  { href: "/alerts",  label: "Alerts",     icon: Bell },
-  { href: "/insights",label: "AI Insights",icon: Sparkles },
+  { href: "/",           label: "Dashboard",  icon: LayoutDashboard },
+  { href: "/objectives", label: "Objectives", icon: CircleDot },
+  { href: "/goals",      label: "Goals",      icon: Target },
+  { href: "/alerts",     label: "Alerts",     icon: Bell },
+  { href: "/insights",   label: "AI Insights",icon: Sparkles },
 ]
 
 export function Sidebar() {

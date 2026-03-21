@@ -2,6 +2,8 @@ import 'server-only'
 import { createServerSupabaseClient } from './supabase-server'
 
 export type GoalStatus = 'not_started' | 'in_progress' | 'at_risk' | 'completed' | 'cancelled'
+export type GoalType = 'standard' | 'strategic' | 'operational' | 'personal' | 'team'
+export type KRType = 'metric' | 'milestone' | 'activity'
 export type TrustLevel =
   | 'draft'
   | 'self_reported'
@@ -22,6 +24,12 @@ export type GoalWithCounts = {
   start_date: string | null
   end_date: string | null
   parent_goal_id: string | null
+  objective_id: string | null
+  goal_type: GoalType
+  kr_type: KRType | null
+  target_value: number | null
+  current_value: number | null
+  unit: string | null
   owner_name: string | null
   kpi_count: number
   sub_goal_count: number
@@ -92,7 +100,7 @@ export async function fetchWorkspaceGoals(): Promise<GoalWithCounts[]> {
   const { data: goals } = await supabase
     .from('goals')
     .select(
-      'id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date, parent_goal_id, owner:workspace_members!owner_id(display_name)'
+      'id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date, parent_goal_id, objective_id, goal_type, kr_type, target_value, current_value, unit, owner:workspace_members!owner_id(display_name)'
     )
     .eq('workspace_id', workspaceId)
     .order('created_at', { ascending: false })
@@ -138,6 +146,12 @@ export async function fetchWorkspaceGoals(): Promise<GoalWithCounts[]> {
     start_date: g.start_date,
     end_date: g.end_date,
     parent_goal_id: g.parent_goal_id,
+    objective_id: g.objective_id ?? null,
+    goal_type: (g.goal_type ?? 'standard') as GoalType,
+    kr_type: (g.kr_type ?? null) as KRType | null,
+    target_value: g.target_value ?? null,
+    current_value: g.current_value ?? null,
+    unit: g.unit ?? null,
     owner_name: (g.owner as unknown as { display_name: string | null } | null)?.display_name ?? null,
     kpi_count: kpiCountMap[g.id] ?? 0,
     sub_goal_count: subGoalCountMap[g.id] ?? 0,
@@ -167,7 +181,7 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
 
   const { data: goal } = await supabase
     .from('goals')
-    .select('id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date, parent_goal_id, owner:workspace_members!owner_id(display_name)')
+    .select('id, workspace_id, title, description, status, progress_pct, trust_level, start_date, end_date, parent_goal_id, objective_id, goal_type, kr_type, target_value, current_value, unit, owner:workspace_members!owner_id(display_name)')
     .eq('id', id)
     .single()
 
@@ -251,9 +265,15 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
       start_date: goal.start_date,
       end_date: goal.end_date,
       parent_goal_id: goal.parent_goal_id,
+      objective_id: goal.objective_id ?? null,
+      goal_type: (goal.goal_type ?? 'standard') as GoalType,
+      kr_type: (goal.kr_type ?? null) as KRType | null,
+      target_value: goal.target_value ?? null,
+      current_value: goal.current_value ?? null,
+      unit: goal.unit ?? null,
       owner_name: (goal.owner as unknown as { display_name: string | null } | null)?.display_name ?? null,
       kpi_count: kpiList.length,
-      sub_goal_count: 0, // populated on list, not needed on detail
+      sub_goal_count: 0,
       task_count: 0,
       task_done_count: 0,
     },

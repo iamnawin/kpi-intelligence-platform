@@ -27,6 +27,12 @@ export async function createGoal(formData: FormData): Promise<void> {
   const progress_pct = Math.min(100, Math.max(0, Number(formData.get('progress_pct')) || 0))
   const start_date = (formData.get('start_date') as string) || null
   const end_date = (formData.get('end_date') as string) || null
+  const goal_type = (formData.get('goal_type') as string) || 'standard'
+  const objective_id = (formData.get('objective_id') as string)?.trim() || null
+  const kr_type = (formData.get('kr_type') as string) || null
+  const target_value = formData.get('target_value') ? Number(formData.get('target_value')) : null
+  const current_value = formData.get('current_value') ? Number(formData.get('current_value')) : null
+  const unit = (formData.get('unit') as string)?.trim() || null
 
   const { error } = await supabase.from('goals').insert({
     workspace_id: workspaceId,
@@ -36,6 +42,12 @@ export async function createGoal(formData: FormData): Promise<void> {
     progress_pct,
     start_date: start_date || null,
     end_date: end_date || null,
+    goal_type,
+    objective_id,
+    kr_type,
+    target_value,
+    current_value,
+    unit,
   })
 
   if (error) throw new Error(error.message)
@@ -55,6 +67,12 @@ export async function updateGoal(id: string, formData: FormData): Promise<void> 
   const progress_pct = Math.min(100, Math.max(0, Number(formData.get('progress_pct')) || 0))
   const start_date = (formData.get('start_date') as string) || null
   const end_date = (formData.get('end_date') as string) || null
+  const goal_type = (formData.get('goal_type') as string) || 'standard'
+  const objective_id = (formData.get('objective_id') as string)?.trim() || null
+  const kr_type = (formData.get('kr_type') as string) || null
+  const target_value = formData.get('target_value') ? Number(formData.get('target_value')) : null
+  const current_value = formData.get('current_value') ? Number(formData.get('current_value')) : null
+  const unit = (formData.get('unit') as string)?.trim() || null
 
   const { error } = await supabase
     .from('goals')
@@ -65,6 +83,12 @@ export async function updateGoal(id: string, formData: FormData): Promise<void> 
       progress_pct,
       start_date: start_date || null,
       end_date: end_date || null,
+      goal_type,
+      objective_id,
+      kr_type,
+      target_value,
+      current_value,
+      unit,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
