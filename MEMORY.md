@@ -98,6 +98,16 @@ Working name during early development: *KPI Intelligence Platform*.
 - `/goals/new` + `/goals/[id]/edit` pages created
 - Goals list: "New Goal" button; Goal detail: "Edit" button + inline TaskForm
 
+### Milestone 10 — Phase E: Personalized Dashboard (committed 2026-03-21)
+- `src/lib/auth.ts`: `getSession()` — resolves userId, role, displayName from Supabase Auth + workspace_members
+- `src/lib/dashboard-data.ts`: `fetchDashboardData(view, userId)` — personal filters by owner_id, company returns all
+- `src/components/dashboard/view-selector.tsx`: Personal/Team/Company segmented control; writes `?view=` param + localStorage
+- `src/components/dashboard/personal-view.tsx`: "Good to see you, {name}" + My Active Goals + KPI Snapshot
+- `src/components/dashboard/team-view.tsx`: Rollup stats + completion bar + Team Goals grid
+- `src/components/dashboard/executive-strip.tsx`: Blue summary bar with 5 headline numbers (company view only)
+- `src/app/(app)/page.tsx`: accepts `?view=` searchParam; admin default = company, member default = personal
+- **Pushed to GitHub main** (commit `ebc842c`)
+
 ### Milestone 10 — Phase D: External Integrations (committed 2026-03-21)
 - `supabase/migrations/007_integrations.sql`: `workspace_integrations` table, `external_id/source/external_url` on tasks
 - `src/lib/integrations/`: `types.ts`, `jira.ts` (REST v3), `linear.ts` (GraphQL), `asana.ts` (REST), `github.ts` (REST)
@@ -148,7 +158,7 @@ Working name during early development: *KPI Intelligence Platform*.
 
 ## Current Status
 
-**Phase**: M10 Phases A+B+C+D shipped — Phase E (Personalized Dashboard) next
+**Phase**: M10 COMPLETE — All 5 phases (A+B+C+D+E) shipped ✅
 
 **Auth flow**:
 ```
@@ -167,11 +177,7 @@ Working name during early development: *KPI Intelligence Platform*.
 - Full dark theme across all pages (forced dark, no toggle)
 - 83 passing tests
 
-**M10 Phases Remaining**:
-- Phase E: Personalized dashboard — Personal / Team / Company view modes (URL `?view=` + localStorage)
-  - `src/lib/dashboard-data.ts` + `src/lib/auth.ts`
-  - `view-selector.tsx`, `personal-view.tsx`, `team-view.tsx`, `executive-strip.tsx`
-  - Update `/` page to accept `?view=` searchParam
+**M10 All Phases Complete** — No remaining phases.
 
 ---
 
