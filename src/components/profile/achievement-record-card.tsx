@@ -1,6 +1,7 @@
 import { Lock, FileText, Calendar, Tag, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import type { LockedProofRecord } from '@/lib/goal-data'
+import { ExportButton } from './export-button'
 
 const TYPE_LABEL: Record<string, string> = {
   delivered: 'Delivered',
@@ -18,9 +19,10 @@ const TYPE_COLOR: Record<string, string> = {
 
 type Props = {
   record: LockedProofRecord
+  appUrl: string
 }
 
-export function AchievementRecordCard({ record }: Props) {
+export function AchievementRecordCard({ record, appUrl }: Props) {
   const formattedDate = record.approvedAt
     ? new Date(record.approvedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : null
@@ -42,6 +44,11 @@ export function AchievementRecordCard({ record }: Props) {
             <span className="text-xs font-semibold uppercase tracking-widest text-purple-400">
               Locked Proof
             </span>
+            {record.isPortable && (
+              <span className="rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-xs text-emerald-400">
+                Portable
+              </span>
+            )}
           </div>
           <h3 className="text-base font-semibold text-gray-100 leading-snug group-hover:text-white">
             {record.title}
@@ -83,7 +90,7 @@ export function AchievementRecordCard({ record }: Props) {
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <span className="text-xs text-gray-600">
           {record.evidenceCount} piece{record.evidenceCount !== 1 ? 's' : ''} of evidence
         </span>
@@ -93,6 +100,14 @@ export function AchievementRecordCard({ record }: Props) {
           </span>
         )}
       </div>
+
+      {/* Export */}
+      <ExportButton
+        achievementId={record.achievementId}
+        isPortable={record.isPortable}
+        exportToken={record.exportToken}
+        appUrl={appUrl}
+      />
     </div>
   )
 }

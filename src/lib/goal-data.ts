@@ -93,6 +93,7 @@ export type LockedProofRecord = {
   evidenceCount: number          // snapshot_data.evidence.length
   approvedAt: string | null      // achievement_records.approved_at
   exportToken: string | null     // achievement_records.export_token
+  isPortable: boolean            // achievement_records.is_portable
 }
 
 async function getWorkspaceId(): Promise<string | null> {
@@ -306,7 +307,7 @@ export async function fetchLockedProofRecords(): Promise<LockedProofRecord[]> {
 
   const { data: records } = await supabase
     .from('achievement_records')
-    .select('id, achievement_id, snapshot_data, approved_at, export_token, goals(title, description)')
+    .select('id, achievement_id, snapshot_data, approved_at, export_token, is_portable, goals(title, description)')
     .eq('workspace_id', workspaceId)
     .order('approved_at', { ascending: false })
 
@@ -329,6 +330,7 @@ export async function fetchLockedProofRecords(): Promise<LockedProofRecord[]> {
       evidenceCount: evidenceArr.length,
       approvedAt: r.approved_at ?? null,
       exportToken: r.export_token ?? null,
+      isPortable: r.is_portable ?? false,
     }
   })
 }

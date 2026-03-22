@@ -12,6 +12,8 @@ const TRUST_WEIGHT: Record<string, number> = {
 }
 
 export default async function ProofProfilePage() {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+
   const [session, achievements, lockedRecords] = await Promise.all([
     getSession(),
     fetchWorkspaceGoals(),
@@ -121,7 +123,7 @@ export default async function ProofProfilePage() {
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {lockedRecords.map(record => (
-                  <AchievementRecordCard key={record.id} record={record} />
+                  <AchievementRecordCard key={record.id} record={record} appUrl={appUrl} />
                 ))}
               </div>
             </section>
