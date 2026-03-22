@@ -1,50 +1,82 @@
-import { UserCircle2, Trophy, Lock, Shield } from "lucide-react"
-import { fetchWorkspaceGoals } from "@/lib/goal-data"
+import { UserCircle2, Trophy, Lock, Shield, Star, ChevronRight } from "lucide-react"
+import Link from "next/link"
+import { fetchWorkspaceGoals, fetchLockedProofRecords } from "@/lib/goal-data"
+import { getSession } from "@/lib/auth"
 import { TrustBadge } from "@/components/goal/trust-badge"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
-import Link from "next/link"
+import { AchievementRecordCard } from "@/components/profile/achievement-record-card"
+
+const TRUST_WEIGHT: Record<string, number> = {
+  draft: 0, self_reported: 20, imported: 40,
+  reviewer_approved: 70, system_verified: 85, locked_proof: 100,
+}
 
 export default async function ProofProfilePage() {
-  const achievements = await fetchWorkspaceGoals()
+  const [session, achievements, lockedRecords] = await Promise.all([
+    getSession(),
+    fetchWorkspaceGoals(),
+    fetchLockedProofRecords(),
+  ])
 
   const completed = achievements.filter(a => a.status === 'completed')
-  const approved  = achievements.filter(a =>
+  const verified  = achievements.filter(a =>
     a.trust_level === 'reviewer_approved' ||
     a.trust_level === 'system_verified' ||
     a.trust_level === 'locked_proof'
   )
 
-  // Simple trust score: average based on trust level weights
-  const TRUST_WEIGHT: Record<string, number> = {
-    draft: 0, self_reported: 20, imported: 40,
-    reviewer_approved: 70, system_verified: 85, locked_proof: 100,
-  }
   const trustScore = achievements.length === 0 ? 0 : Math.round(
     achievements.reduce((sum, a) => sum + (TRUST_WEIGHT[a.trust_level] ?? 0), 0) / achievements.length
   )
 
+  // In-progress achievements (not locked)
+  const inProgress = achievements.filter(a => a.trust_level !== 'locked_proof')
+
+  const displayName = session?.displayName ?? 'You'
+
   return (
     <div className="flex flex-col gap-8">
-      {/* Header */}
-      <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600/20 to-violet-600/20 border border-blue-500/20">
-          <UserCircle2 className="h-6 w-6 text-blue-400" />
+
+      {/* ── Profile card ── */}
+      <div className="relative overflow-hidden rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 via-gray-900 to-violet-950/30 p-6">
+        <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 rounded-full bg-violet-600/8 blur-3xl" />
+        <div className="relative flex items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-violet-500/20 bg-gradient-to-br from-blue-600/20 to-violet-600/20">
+            <UserCircle2 className="h-7 w-7 text-violet-300" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold text-gray-50">{displayName}</h1>
+            <p className="text-sm text-gray-500">{session?.email ?? ''}</p>
+          </div>
+          {/* Trust score ring */}
+          <div className="shrink-0 text-center">
+            <p className="text-3xl font-bold text-violet-400">{trustScore}</p>
+            <p className="text-xs text-gray-600">Trust Score</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-50">Proof Profile</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Your verified achievement record — ready to carry forward.
-          </p>
+
+        {/* Trust bar */}
+        <div className="relative mt-5">
+          <div className="mb-1.5 flex items-center justify-between">
+            <p className="text-xs text-gray-600">Proof Strength</p>
+            <p className="text-xs text-gray-500">{trustScore} / 100</p>
+          </div>
+          <div className="h-1.5 w-full rounded-full bg-gray-800">
+            <div
+              className="h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all"
+              style={{ width: `${trustScore}%` }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Summary stats */}
+      {/* ── Summary stats ── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total",       value: achievements.length, color: "text-gray-100",    accent: "border-gray-800 bg-gray-900" },
-          { label: "Completed",   value: completed.length,    color: "text-emerald-400", accent: "border-emerald-500/20 bg-emerald-500/5" },
-          { label: "Verified",    value: approved.length,     color: "text-blue-400",    accent: "border-blue-500/20 bg-blue-500/5" },
-          { label: "Trust Score", value: `${trustScore}%`,    color: "text-violet-400",  accent: "border-violet-500/20 bg-violet-500/5" },
+          { label: "Total",     value: achievements.length, color: "text-gray-100",    accent: "border-gray-800 bg-gray-900" },
+          { label: "Completed", value: completed.length,    color: "text-emerald-400", accent: "border-emerald-500/20 bg-emerald-500/5" },
+          { label: "Verified",  value: verified.length,     color: "text-blue-400",    accent: "border-blue-500/20 bg-blue-500/5" },
+          { label: "Locked",    value: lockedRecords.length, color: "text-purple-400", accent: "border-purple-500/20 bg-purple-500/5" },
         ].map(s => (
           <div key={s.label} className={`rounded-xl border p-4 ${s.accent}`}>
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
@@ -74,52 +106,79 @@ export default async function ProofProfilePage() {
           </Link>
         </div>
       ) : (
-        /* ── Achievement records ── */
-        <div className="flex flex-col gap-4">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
-            Achievement Records
-          </h2>
-
-          <div className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900">
-            <div className="divide-y divide-gray-800/80">
-              {achievements.map(a => (
-                <Link
-                  key={a.id}
-                  href={`/achievements/${a.id}`}
-                  className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-gray-800/40"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-200 group-hover:text-white truncate">
-                      {a.title}
-                    </p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <GoalStatusBadge status={a.status} />
-                      {a.end_date && (
-                        <span className="text-xs text-gray-600">{a.end_date}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <TrustBadge level={a.trust_level} />
-                    {a.trust_level === 'locked_proof' && (
-                      <Lock className="h-4 w-4 text-purple-400" />
-                    )}
-                    {a.trust_level === 'system_verified' && (
-                      <Shield className="h-4 w-4 text-emerald-400" />
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {approved.length === 0 && (
-            <p className="text-center text-xs text-gray-600">
-              None of your achievements are manager-approved yet.
-              Ask your manager to review completed achievements to unlock portability.
-            </p>
+        <>
+          {/* ── Locked Proof Records ── */}
+          {lockedRecords.length > 0 && (
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center gap-2">
+                <Lock className="h-4 w-4 text-purple-400" />
+                <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  Locked Proof Records
+                </h2>
+                <span className="rounded-full bg-purple-500/10 px-2 py-0.5 text-xs text-purple-400">
+                  {lockedRecords.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {lockedRecords.map(record => (
+                  <AchievementRecordCard key={record.id} record={record} />
+                ))}
+              </div>
+            </section>
           )}
-        </div>
+
+          {/* ── In Progress / Other Achievements ── */}
+          {inProgress.length > 0 && (
+            <section className="flex flex-col gap-4">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                In Progress
+              </h2>
+
+              <div className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900">
+                <div className="divide-y divide-gray-800/80">
+                  {inProgress.map(a => (
+                    <Link
+                      key={a.id}
+                      href={`/achievements/${a.id}`}
+                      className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-gray-800/40"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="truncate text-sm font-semibold text-gray-200 group-hover:text-white">
+                          {a.title}
+                        </p>
+                        <div className="mt-1 flex items-center gap-2">
+                          <GoalStatusBadge status={a.status} />
+                          {a.end_date && (
+                            <span className="text-xs text-gray-600">{a.end_date}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <TrustBadge level={a.trust_level} />
+                        {a.trust_level === 'system_verified' && (
+                          <Shield className="h-4 w-4 text-emerald-400" />
+                        )}
+                        {a.trust_level === 'reviewer_approved' && (
+                          <Star className="h-4 w-4 text-amber-400" />
+                        )}
+                        <ChevronRight className="h-4 w-4 text-gray-700 group-hover:text-gray-500" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {verified.length === 0 && (
+                <p className="text-center text-xs text-gray-600">
+                  None of your achievements are manager-approved yet.{' '}
+                  <Link href="/achievements" className="text-blue-500 hover:underline">
+                    Submit one for review.
+                  </Link>
+                </p>
+              )}
+            </section>
+          )}
+        </>
       )}
     </div>
   )

@@ -82,6 +82,19 @@ export type GoalDetailData = {
   tasks: TaskRecord[]
 }
 
+export type LockedProofRecord = {
+  id: string                  // achievement_records.id
+  achievementId: string       // goals.id
+  title: string               // goals.title
+  description: string | null
+  outcomeSupport: string | null  // from snapshot_data.goal.outcome_summary
+  periodLabel: string | null     // from snapshot_data.goal.period_label
+  achievementType: string | null // from snapshot_data.goal.achievement_type
+  evidenceCount: number          // snapshot_data.evidence.length
+  approvedAt: string | null      // achievement_records.approved_at
+  exportToken: string | null     // achievement_records.export_token
+}
+
 async function getWorkspaceId(): Promise<string | null> {
   const supabase = await createServerSupabaseClient()
   const { data } = await supabase
@@ -283,4 +296,39 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     evidence,
     tasks,
   }
+}
+
+export async function fetchLockedProofRecords(): Promise<LockedProofRecord[]> {
+  const workspaceId = await getWorkspaceId()
+  if (!workspaceId) return []
+
+  const supabase = await createServerSupabaseClient()
+
+  const { data: records } = await supabase
+    .from('achievement_records')
+    .select('id, achievement_id, snapshot_data, approved_at, export_token, goals(title, description)')
+    .eq('workspace_id', workspaceId)
+    .order('approved_at', { ascending: false })
+
+  if (!records || records.length === 0) return []
+
+  return records.map(r => {
+    const snapshot = (r.snapshot_data ?? {}) as Record<string, any>
+    const snapshotGoal = snapshot.goal ?? {}
+    const evidenceArr = Array.isArray(snapshot.evidence) ? snapshot.evidence : []
+    const live = r.goals as unknown as { title: string; description: string | null } | null
+
+    return {
+      id: r.id,
+      achievementId: r.achievement_id,
+      title: live?.title ?? snapshotGoal.title ?? 'Untitled',
+      description: live?.description ?? snapshotGoal.description ?? null,
+      outcomeSupport: snapshotGoal.outcome_summary ?? null,
+      periodLabel: snapshotGoal.period_label ?? null,
+      achievementType: snapshotGoal.achievement_type ?? null,
+      evidenceCount: evidenceArr.length,
+      approvedAt: r.approved_at ?? null,
+      exportToken: r.export_token ?? null,
+    }
+  })
 }

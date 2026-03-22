@@ -15,6 +15,16 @@ export async function approveAchievement(achievementId: string, formData: FormDa
   const note = (formData.get('note') as string | null)?.trim() ?? ''
   const supabase = await createServerSupabaseClient()
 
+  // Resolve member row for the current user (need member UUID + workspace_id)
+  const { data: memberRow } = await supabase
+    .from('workspace_members')
+    .select('id, workspace_id')
+    .eq('user_id', session.userId)
+    .limit(1)
+    .single()
+
+  if (!memberRow) throw new Error('Workspace member not found')
+
   // Fetch the full achievement + evidence snapshot
   const { data: goal } = await supabase
     .from('goals')
@@ -29,12 +39,14 @@ export async function approveAchievement(achievementId: string, formData: FormDa
     .select('*')
     .eq('goal_id', achievementId)
 
+  const approvedAt = new Date().toISOString()
+
   // Create frozen snapshot in achievement_records
   const snapshotData = {
     goal,
     evidence: evidence ?? [],
     approvedBy: session.userId,
-    approvedAt: new Date().toISOString(),
+    approvedAt,
     reviewNote: note,
   }
 
@@ -46,7 +58,11 @@ export async function approveAchievement(achievementId: string, formData: FormDa
     .upsert(
       {
         achievement_id: achievementId,
+        member_id: memberRow.id,
+        workspace_id: memberRow.workspace_id,
         snapshot_data: snapshotData,
+        approved_by: memberRow.id,
+        approved_at: approvedAt,
         export_token: exportToken,
       },
       { onConflict: 'achievement_id' }
