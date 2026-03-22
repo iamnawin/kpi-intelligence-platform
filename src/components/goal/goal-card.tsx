@@ -42,7 +42,7 @@ export function GoalCard({ goal }: { goal: GoalWithCounts }) {
 
   return (
     <Link
-      href={`/goals/${goal.id}`}
+      href={`/achievements/${goal.id}`}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-800/80 bg-gray-900 transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-700 hover:shadow-xl hover:shadow-black/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
     >
       {/* Status accent bar */}

@@ -3,26 +3,26 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Bell, Sparkles, Target, CircleDot,
-  Settings, ChevronRight, Building2, User2,
+  LayoutDashboard, Bell, Sparkles, Trophy, UserCircle2,
+  Plug, ChevronRight, Building2, User2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type NavItem = { href: string; label: string; icon: React.ElementType; badge?: string }
 
 const NAV_MAIN: NavItem[] = [
-  { href: "/",           label: "Dashboard",   icon: LayoutDashboard },
-  { href: "/objectives", label: "Objectives",  icon: CircleDot },
-  { href: "/goals",      label: "Goals",       icon: Target },
+  { href: "/",              label: "Proof Feed",    icon: LayoutDashboard },
+  { href: "/achievements",  label: "Achievements",  icon: Trophy },
+  { href: "/profile",       label: "Proof Profile", icon: UserCircle2 },
 ]
 
 const NAV_ANALYTICS: NavItem[] = [
-  { href: "/alerts",     label: "Alerts",      icon: Bell },
-  { href: "/insights",   label: "AI Insights", icon: Sparkles },
+  { href: "/alerts",   label: "Alerts",      icon: Bell },
+  { href: "/insights", label: "AI Insights", icon: Sparkles },
 ]
 
 const NAV_SETTINGS: NavItem[] = [
-  { href: "/settings/integrations", label: "Integrations", icon: Settings },
+  { href: "/connections", label: "Connections", icon: Plug },
 ]
 
 type Props = {

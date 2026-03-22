@@ -33,7 +33,7 @@ export function GoalRow({ goal, depth = 0 }: Props) {
 
   return (
     <Link
-      href={`/goals/${goal.id}`}
+      href={`/achievements/${goal.id}`}
       className={`group flex items-start gap-3 px-5 py-4 transition-colors hover:bg-gray-800/40 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 ${
         depth > 0 ? 'pl-12 border-l-2 border-gray-800' : ''
       }`}

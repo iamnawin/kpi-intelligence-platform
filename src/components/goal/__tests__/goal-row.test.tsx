@@ -36,7 +36,7 @@ describe('GoalRow', () => {
   it('links to the goal detail page', () => {
     render(<GoalRow goal={baseGoal} />)
     const link = screen.getByRole('link')
-    expect(link).toHaveAttribute('href', '/goals/goal-2')
+    expect(link).toHaveAttribute('href', '/achievements/goal-2')
   })
 
   it('renders status badge', () => {

@@ -83,9 +83,9 @@ export default async function DashboardPage({ searchParams }: Props) {
     <div className="flex flex-col gap-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-50">Command Center</h1>
+          <h1 className="text-2xl font-bold text-gray-50">Proof Feed</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Live KPIs, goal progress, and AI-detected signals — all in one place.
+            Active achievements, trust signals, and evidence — all in one place.
           </p>
         </div>
         <Suspense>
@@ -123,7 +123,7 @@ export default async function DashboardPage({ searchParams }: Props) {
       {activeGoals.length > 0 && (
         <section>
           <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-600">
-            Active Goals
+            Active Achievements
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activeGoals.map(goal => (
