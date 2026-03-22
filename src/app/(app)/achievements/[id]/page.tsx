@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Pencil, CheckSquare, FileText } from "lucide-react"
+import { ArrowLeft, Pencil, CheckSquare, FileText, ClipboardCheck, Send } from "lucide-react"
 import { fetchGoalById } from "@/lib/goal-data"
+import { getSession } from "@/lib/auth"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { TrustBadge } from "@/components/goal/trust-badge"
 import { TrustLadder } from "@/components/goal/trust-ladder"
@@ -12,12 +13,14 @@ import { TaskRow } from "@/components/goal/task-row"
 import { TaskForm } from "@/components/forms/task-form"
 import { createTask } from "@/app/actions/task-actions"
 import { createEvidence } from "@/app/actions/evidence-actions"
+import { submitForReview } from "@/app/actions/review-actions"
+import type { TrustLevel } from "@/lib/goal-data"
 
 type Props = { params: Promise<{ id: string }> }
 
 export default async function AchievementDetailPage({ params }: Props) {
   const { id } = await params
-  const data = await fetchGoalById(id)
+  const [data, session] = await Promise.all([fetchGoalById(id), getSession()])
   if (!data) notFound()
 
   const { goal, evidence, tasks } = data
@@ -28,6 +31,12 @@ export default async function AchievementDetailPage({ params }: Props) {
     "bg-blue-500"
 
   const boundCreateEvidence = createEvidence.bind(null, goal.id)
+  const boundSubmitForReview = submitForReview.bind(null, goal.id)
+
+  const isAdmin = session?.role === 'admin'
+  const canSubmitForReview = (['self_reported', 'imported'] as TrustLevel[]).includes(goal.trust_level)
+  const isPendingReview = goal.trust_level === 'reviewer_approved'
+  const isLocked = goal.trust_level === 'locked_proof'
 
   return (
     <div>
@@ -52,13 +61,42 @@ export default async function AchievementDetailPage({ params }: Props) {
             <GoalStatusBadge status={goal.status} />
             <TrustBadge level={goal.trust_level} />
           </div>
-          <Link
-            href={`/achievements/${goal.id}/edit`}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-3 py-1.5 text-sm text-gray-300 transition-colors hover:bg-gray-800"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-            Edit
-          </Link>
+          {/* Admin: Review button */}
+          {isAdmin && !isLocked && (
+            <Link
+              href={`/achievements/${goal.id}/review`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-violet-700 bg-violet-900/30 px-3 py-1.5 text-sm text-violet-300 transition-colors hover:bg-violet-900/50"
+            >
+              <ClipboardCheck className="h-3.5 w-3.5" />
+              Review
+            </Link>
+          )}
+          {/* Member: Submit for review */}
+          {!isAdmin && canSubmitForReview && (
+            <form action={boundSubmitForReview}>
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-700 bg-blue-900/30 px-3 py-1.5 text-sm text-blue-300 transition-colors hover:bg-blue-900/50"
+              >
+                <Send className="h-3.5 w-3.5" />
+                Submit for Review
+              </button>
+            </form>
+          )}
+          {isPendingReview && !isAdmin && (
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-700/50 bg-amber-900/20 px-3 py-1.5 text-sm text-amber-400">
+              Awaiting Review
+            </span>
+          )}
+          {!isLocked && (
+            <Link
+              href={`/achievements/${goal.id}/edit`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-3 py-1.5 text-sm text-gray-300 transition-colors hover:bg-gray-800"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              Edit
+            </Link>
+          )}
         </div>
       </div>
 
