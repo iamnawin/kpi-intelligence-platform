@@ -96,6 +96,7 @@ export default async function IntegrationsPage({
             logo={p.logo}
             isConnected={connected_providers.has(p.id)}
             syncedAt={synced_at[p.id] ?? null}
+            currentSettings={{}}
           />
         ))}
       </div>

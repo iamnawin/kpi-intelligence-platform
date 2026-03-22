@@ -2,9 +2,11 @@ import { UserCircle2, Trophy, Lock, Shield, Star, ChevronRight } from "lucide-re
 import Link from "next/link"
 import { fetchWorkspaceGoals, fetchLockedProofRecords } from "@/lib/goal-data"
 import { getSession } from "@/lib/auth"
+import { createServerSupabaseClient } from "@/lib/supabase-server"
 import { TrustBadge } from "@/components/goal/trust-badge"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { AchievementRecordCard } from "@/components/profile/achievement-record-card"
+import { ProfileEditForm } from "@/components/profile/profile-edit-form"
 
 const TRUST_WEIGHT: Record<string, number> = {
   draft: 0, self_reported: 20, imported: 40,
@@ -20,6 +22,20 @@ export default async function ProofProfilePage() {
     fetchLockedProofRecords(),
   ])
 
+  // Fetch role_title + bio from workspace_members
+  let roleTitle: string | null = null
+  let bio: string | null = null
+  if (session) {
+    const supabase = await createServerSupabaseClient()
+    const { data: memberRow } = await supabase
+      .from('workspace_members')
+      .select('role_title, bio')
+      .eq('user_id', session.userId)
+      .single()
+    roleTitle = memberRow?.role_title ?? null
+    bio       = memberRow?.bio ?? null
+  }
+
   const completed = achievements.filter(a => a.status === 'completed')
   const verified  = achievements.filter(a =>
     a.trust_level === 'reviewer_approved' ||
@@ -31,7 +47,6 @@ export default async function ProofProfilePage() {
     achievements.reduce((sum, a) => sum + (TRUST_WEIGHT[a.trust_level] ?? 0), 0) / achievements.length
   )
 
-  // In-progress achievements (not locked)
   const inProgress = achievements.filter(a => a.trust_level !== 'locked_proof')
 
   const displayName = session?.displayName ?? 'You'
@@ -48,6 +63,9 @@ export default async function ProofProfilePage() {
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-xl font-bold text-gray-50">{displayName}</h1>
+            {roleTitle && (
+              <p className="text-sm font-medium text-blue-400">{roleTitle}</p>
+            )}
             <p className="text-sm text-gray-500">{session?.email ?? ''}</p>
           </div>
           {/* Trust score ring */}
@@ -57,8 +75,16 @@ export default async function ProofProfilePage() {
           </div>
         </div>
 
+        {bio && (
+          <p className="relative mt-3 text-sm leading-relaxed text-gray-400">{bio}</p>
+        )}
+
+        <div className="relative mt-3 flex items-center justify-between">
+          <ProfileEditForm currentRoleTitle={roleTitle} currentBio={bio} />
+        </div>
+
         {/* Trust bar */}
-        <div className="relative mt-5">
+        <div className="relative mt-4">
           <div className="mb-1.5 flex items-center justify-between">
             <p className="text-xs text-gray-600">Proof Strength</p>
             <p className="text-xs text-gray-500">{trustScore} / 100</p>

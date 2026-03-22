@@ -49,16 +49,18 @@ export default async function ConnectionsPage({
 
   const connected_providers = new Set<string>()
   const synced_at: Record<string, string | null> = {}
+  const provider_settings: Record<string, Record<string, string>> = {}
 
   if (workspaceId) {
     const { data: integrations } = await supabase
       .from('workspace_integrations')
-      .select('provider, synced_at')
+      .select('provider, synced_at, settings')
       .eq('workspace_id', workspaceId)
 
     for (const row of integrations ?? []) {
       connected_providers.add(row.provider)
       synced_at[row.provider] = row.synced_at
+      provider_settings[row.provider] = (row.settings ?? {}) as Record<string, string>
     }
   }
 
@@ -97,6 +99,7 @@ export default async function ConnectionsPage({
             logo={p.logo}
             isConnected={connected_providers.has(p.id)}
             syncedAt={synced_at[p.id] ?? null}
+            currentSettings={provider_settings[p.id] ?? {}}
           />
         ))}
       </div>
