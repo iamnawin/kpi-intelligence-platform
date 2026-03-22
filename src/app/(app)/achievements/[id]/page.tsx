@@ -14,6 +14,8 @@ import { TaskForm } from "@/components/forms/task-form"
 import { createTask } from "@/app/actions/task-actions"
 import { createEvidence } from "@/app/actions/evidence-actions"
 import { submitForReview } from "@/app/actions/review-actions"
+import { fetchConnectedProviders } from "@/app/actions/integration-actions"
+import { EvidenceImportPanel } from "@/components/goal/evidence-import-panel"
 import type { TrustLevel } from "@/lib/goal-data"
 
 type Props = { params: Promise<{ id: string }> }
@@ -32,6 +34,7 @@ export default async function AchievementDetailPage({ params }: Props) {
 
   const boundCreateEvidence = createEvidence.bind(null, goal.id)
   const boundSubmitForReview = submitForReview.bind(null, goal.id)
+  const connectedProviders = session ? await fetchConnectedProviders(session.workspaceId) : []
 
   const isAdmin = session?.role === 'admin'
   const canSubmitForReview = (['self_reported', 'imported'] as TrustLevel[]).includes(goal.trust_level)
@@ -151,6 +154,12 @@ export default async function AchievementDetailPage({ params }: Props) {
               </div>
             )}
 
+            {!isLocked && connectedProviders.length > 0 && (
+              <div className="mb-2">
+                <p className="mb-2 text-xs text-gray-600">Import completed items as evidence:</p>
+                <EvidenceImportPanel achievementId={goal.id} connectedProviders={connectedProviders} />
+              </div>
+            )}
             <EvidenceForm action={boundCreateEvidence} />
           </div>
 
