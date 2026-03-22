@@ -56,12 +56,12 @@ describe('GoalCard', () => {
 
   it('renders KPI count when > 0', () => {
     render(<GoalCard goal={baseGoal} />)
-    expect(screen.getByText('3 KPIs linked')).toBeInTheDocument()
+    expect(screen.getByText('3 KPIs')).toBeInTheDocument()
   })
 
   it('renders singular KPI when count is 1', () => {
     render(<GoalCard goal={{ ...baseGoal, kpi_count: 1 }} />)
-    expect(screen.getByText('1 KPI linked')).toBeInTheDocument()
+    expect(screen.getByText('1 KPI')).toBeInTheDocument()
   })
 
   it('hides KPI count when 0', () => {

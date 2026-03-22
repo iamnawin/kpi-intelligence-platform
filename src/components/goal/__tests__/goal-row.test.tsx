@@ -82,7 +82,7 @@ describe('GoalRow', () => {
   it('applies indentation class at depth > 0', () => {
     render(<GoalRow goal={baseGoal} depth={1} />)
     const link = screen.getByRole('link')
-    expect(link.className).toContain('pl-10')
+    expect(link.className).toContain('pl-12')
   })
 
   it('does not apply indentation at depth 0', () => {
