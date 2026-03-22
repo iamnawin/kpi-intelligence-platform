@@ -9,6 +9,7 @@ const baseRecord: EvidenceRecord = {
   description: 'Screenshot from Stripe dashboard',
   evidence_type: 'file',
   source_url: null,
+  source_type: 'manual',
   trust_level: 'imported',
   uploader_name: 'Alice',
   created_at: '2026-03-15T10:00:00Z',

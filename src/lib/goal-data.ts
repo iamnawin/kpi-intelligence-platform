@@ -69,6 +69,7 @@ export type EvidenceRecord = {
   description: string | null
   evidence_type: EvidenceType
   source_url: string | null
+  source_type: string | null    // 'manual' | 'import' | 'github' | 'jira' | 'linear' | 'asana'
   trust_level: TrustLevel
   uploader_name: string | null
   created_at: string
@@ -204,7 +205,7 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
       : Promise.resolve({ data: [] }),
     supabase
       .from('evidence')
-      .select('id, title, description, evidence_type, source_url, trust_level, created_at, uploader:workspace_members!uploaded_by(display_name)')
+      .select('id, title, description, evidence_type, source_url, source_type, trust_level, created_at, uploader:workspace_members!uploaded_by(display_name)')
       .eq('goal_id', id)
       .order('created_at', { ascending: false })
       .limit(10),
@@ -240,6 +241,7 @@ export async function fetchGoalById(id: string): Promise<GoalDetailData | null> 
     description: e.description,
     evidence_type: e.evidence_type as EvidenceType,
     source_url: e.source_url,
+    source_type: (e as any).source_type ?? 'manual',
     trust_level: e.trust_level as TrustLevel,
     uploader_name: (e.uploader as unknown as { display_name: string | null } | null)?.display_name ?? null,
     created_at: e.created_at,
