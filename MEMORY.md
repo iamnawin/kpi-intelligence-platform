@@ -274,6 +274,21 @@ Working name during early development: *KPI Intelligence Platform*.
   - `npm run build` passed
   - `npm run test` passed (88 tests)
 
+### Milestone 17 â€” Product Phase Reset And Clarity Pass (in progress 2026-04-05)
+- Added phased product direction at `.omx/plans/proofpath-product-phases-2026-04-05.md`
+- Reframed the product around one loop:
+  - do work
+  - capture achievement
+  - attach evidence
+  - raise trust
+  - export proof
+- Phase A focuses on user-facing clarity:
+  - achievements as the core record
+  - connections as supporting signal inputs
+  - profile as the proof output
+- Verification:
+  - pending after the current copy and UX pass
+
 ---
 
 ## Current Status

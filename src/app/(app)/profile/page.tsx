@@ -80,6 +80,15 @@ export default async function ProofProfilePage() {
         </div>
       </div>
 
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/70 p-5">
+        <h2 className="text-sm font-semibold text-white">What this page is for</h2>
+        <p className="mt-2 text-sm leading-relaxed text-gray-400">
+          This page is the proof output of the app. Achievements start in the Achievements area, gain trust
+          through evidence and review, and then show up here as stronger records. Locked proof is the
+          portable version you can share outside the workspace.
+        </p>
+      </div>
+
       {/* ── Summary stats ── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
@@ -104,8 +113,8 @@ export default async function ProofProfilePage() {
           </div>
           <h2 className="mb-2 text-xl font-bold text-white">No achievements yet</h2>
           <p className="mx-auto mb-6 max-w-md text-sm leading-relaxed text-gray-400">
-            Start recording achievements to build your proof profile.
-            Once manager-approved, they appear here as locked proof.
+            Start in Achievements. As records gain evidence and move through review, this page becomes your
+            proof summary and export surface.
           </p>
           <Link
             href="/achievements/new"

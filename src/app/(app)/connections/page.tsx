@@ -9,26 +9,26 @@ const PROVIDERS = [
   {
     id: 'github' as const,
     name: 'GitHub',
-    description: 'Link GitHub issues and PRs as evidence for your achievements.',
-    logo: '⚫',
+    description: 'Sync GitHub work signals that can later support achievement evidence.',
+    logo: 'G',
   },
   {
     id: 'jira' as const,
     name: 'Jira',
-    description: 'Sync Jira issues as tasks and evidence linked to achievements.',
-    logo: '🔵',
+    description: 'Sync Jira work into the workspace so relevant items can support achievements.',
+    logo: 'J',
   },
   {
     id: 'linear' as const,
     name: 'Linear',
-    description: 'Import Linear issues and track their progress as evidence.',
-    logo: '🟣',
+    description: 'Pull Linear issues into the workspace task layer before linking them to outcomes.',
+    logo: 'L',
   },
   {
     id: 'asana' as const,
     name: 'Asana',
-    description: 'Pull Asana tasks into your achievements as work evidence.',
-    logo: '🟠',
+    description: 'Bring Asana tasks into ProofPath as source material for achievement evidence.',
+    logo: 'A',
   },
 ]
 
@@ -42,9 +42,9 @@ export default async function ConnectionsPage({
   const member = await getWorkspaceMember()
   const workspaceId = member?.workspaceId ?? null
 
-  const connected_providers = new Set<string>()
-  const synced_at: Record<string, string | null> = {}
-  const provider_settings: Record<string, Record<string, string>> = {}
+  const connectedProviders = new Set<string>()
+  const syncedAt: Record<string, string | null> = {}
+  const providerSettings: Record<string, Record<string, string>> = {}
 
   if (workspaceId) {
     const { data: integrations } = await supabase
@@ -53,9 +53,9 @@ export default async function ConnectionsPage({
       .eq('workspace_id', workspaceId)
 
     for (const row of integrations ?? []) {
-      connected_providers.add(row.provider)
-      synced_at[row.provider] = row.synced_at
-      provider_settings[row.provider] = (row.settings ?? {}) as Record<string, string>
+      connectedProviders.add(row.provider)
+      syncedAt[row.provider] = row.synced_at
+      providerSettings[row.provider] = (row.settings ?? {}) as Record<string, string>
     }
   }
 
@@ -68,7 +68,8 @@ export default async function ConnectionsPage({
         <div>
           <h1 className="text-2xl font-bold text-gray-50">Connections</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Connect your existing tools. Work signals flow in automatically as evidence.
+            Connect external tools to bring work signals into ProofPath. Connections support achievements;
+            they do not replace them.
           </p>
         </div>
       </div>
@@ -84,17 +85,42 @@ export default async function ConnectionsPage({
         </div>
       )}
 
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">Step 1</p>
+          <h2 className="mt-2 text-sm font-semibold text-white">Connect a tool</h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-400">
+            Authorize Jira, GitHub, Linear, or Asana for the workspace.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">Step 2</p>
+          <h2 className="mt-2 text-sm font-semibold text-white">Sync work signals</h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-400">
+            Sync pulls matching external work into the workspace task layer. It does not automatically prove
+            an achievement by itself.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">Step 3</p>
+          <h2 className="mt-2 text-sm font-semibold text-white">Attach the relevant evidence</h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-400">
+            Use the best matching work signals to strengthen an achievement and raise trust through review.
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {PROVIDERS.map(p => (
+        {PROVIDERS.map(provider => (
           <IntegrationCard
-            key={p.id}
-            provider={p.id}
-            name={p.name}
-            description={p.description}
-            logo={p.logo}
-            isConnected={connected_providers.has(p.id)}
-            syncedAt={synced_at[p.id] ?? null}
-            currentSettings={provider_settings[p.id] ?? {}}
+            key={provider.id}
+            provider={provider.id}
+            name={provider.name}
+            description={provider.description}
+            logo={provider.logo}
+            isConnected={connectedProviders.has(provider.id)}
+            syncedAt={syncedAt[provider.id] ?? null}
+            currentSettings={providerSettings[provider.id] ?? {}}
           />
         ))}
       </div>

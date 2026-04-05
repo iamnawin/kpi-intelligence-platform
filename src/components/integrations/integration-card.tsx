@@ -28,7 +28,7 @@ export function IntegrationCard({ provider, name, description, logo, isConnected
       if (!res.ok) {
         setSyncResult(`Error: ${data.error}`)
       } else {
-        setSyncResult(`Synced ${data.synced} task${data.synced !== 1 ? 's' : ''}`)
+        setSyncResult(`Synced ${data.synced} workspace task${data.synced !== 1 ? 's' : ''}`)
       }
     } catch {
       setSyncResult('Network error')
@@ -48,19 +48,22 @@ export function IntegrationCard({ provider, name, description, logo, isConnected
           </div>
         </div>
         <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-          isConnected
-            ? 'bg-green-950 text-green-400'
-            : 'bg-gray-800 text-gray-500'
+          isConnected ? 'bg-green-950 text-green-400' : 'bg-gray-800 text-gray-500'
         }`}>
           {isConnected ? 'Connected' : 'Not connected'}
         </span>
       </div>
 
-      {syncedAt && (
+      <div className="space-y-1">
+        {syncedAt && (
+          <p className="text-xs text-gray-600">
+            Last synced: {new Date(syncedAt).toLocaleString()}
+          </p>
+        )}
         <p className="text-xs text-gray-600">
-          Last synced: {new Date(syncedAt).toLocaleString()}
+          Sync updates workspace tasks first. Achievement evidence is attached later from the relevant record.
         </p>
-      )}
+      </div>
 
       {syncResult && (
         <p className={`text-xs ${syncResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}`}>
@@ -78,7 +81,7 @@ export function IntegrationCard({ provider, name, description, logo, isConnected
               className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50"
             >
               <RefreshCw className={`h-3 w-3 ${syncing ? 'animate-spin' : ''}`} />
-              {syncing ? 'Syncing…' : 'Sync Now'}
+              {syncing ? 'Syncing...' : 'Sync Now'}
             </button>
             <a
               href={`/api/integrations/${provider}/authorize`}
