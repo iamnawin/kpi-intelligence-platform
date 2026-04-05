@@ -215,6 +215,16 @@ Working name during early development: *KPI Intelligence Platform*.
   - `npm run build` passed
   - `npm run test` passed (88 tests)
 
+### Milestone 14 â€” Vercel Middleware Timeout Fix (implemented 2026-04-05)
+- Simplified `src/middleware.ts` to remove Supabase session refresh and `auth.getUser()` from the edge path
+- Middleware now only forwards the request and sets `x-pathname`
+- Auth enforcement remains in server/layout code instead of the edge runtime
+- Side effect improvement: public proof links are no longer blocked by auth-dependent middleware behavior
+- Verification:
+  - `npm run typecheck` passed
+  - `npm run build` passed
+  - `npm run test` passed (88 tests)
+
 ---
 
 ## Current Status
