@@ -3,15 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { proofPathRoutes } from '@/lib/proofpath-routes'
+import { getWorkspaceMember } from '@/lib/auth'
 
 async function getWorkspaceId(): Promise<string | null> {
-  const supabase = await createServerSupabaseClient()
-  const { data } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .limit(1)
-    .single()
-  return data?.workspace_id ?? null
+  const member = await getWorkspaceMember()
+  return member?.workspaceId ?? null
 }
 
 export async function createTask(goalId: string, formData: FormData): Promise<void> {

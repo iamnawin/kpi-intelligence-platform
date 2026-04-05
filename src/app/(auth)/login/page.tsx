@@ -19,22 +19,34 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    const supabase = createClient()
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      const supabase = createClient()
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (signInError) {
-      setError(signInError.message)
+      if (signInError) {
+        setError(signInError.message)
+        return
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      const { data: member } = user
+        ? await supabase
+            .from('workspace_members')
+            .select('workspace_id')
+            .eq('user_id', user.id)
+            .limit(1)
+            .single()
+        : { data: null }
+
+      router.push(member ? '/' : '/onboarding')
+    } catch {
+      setError('Unable to reach the authentication service. Check Vercel env vars and Supabase project access.')
+    } finally {
       setLoading(false)
-      return
     }
-
-    const { data: member } = await supabase
-      .from('workspace_members')
-      .select('workspace_id')
-      .limit(1)
-      .single()
-
-    router.push(member ? '/' : '/onboarding')
   }
 
   return (

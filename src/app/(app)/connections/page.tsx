@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { IntegrationCard } from '@/components/integrations/integration-card'
 import { Plug } from 'lucide-react'
+import { getWorkspaceMember } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,14 +39,8 @@ export default async function ConnectionsPage({
 }) {
   const { connected, error } = await searchParams
   const supabase = await createServerSupabaseClient()
-
-  const { data: memberRow } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .limit(1)
-    .single()
-
-  const workspaceId = memberRow?.workspace_id ?? null
+  const member = await getWorkspaceMember()
+  const workspaceId = member?.workspaceId ?? null
 
   const connected_providers = new Set<string>()
   const synced_at: Record<string, string | null> = {}

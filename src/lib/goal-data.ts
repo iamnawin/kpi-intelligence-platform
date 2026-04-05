@@ -1,5 +1,6 @@
 import 'server-only'
 import { createServerSupabaseClient } from './supabase-server'
+import { getWorkspaceMember } from './auth'
 
 export type GoalStatus = 'not_started' | 'in_progress' | 'at_risk' | 'completed' | 'cancelled'
 export type GoalType = 'standard' | 'strategic' | 'operational' | 'personal' | 'team'
@@ -97,13 +98,8 @@ export type LockedProofRecord = {
 }
 
 async function getWorkspaceId(): Promise<string | null> {
-  const supabase = await createServerSupabaseClient()
-  const { data } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .limit(1)
-    .single()
-  return data?.workspace_id ?? null
+  const member = await getWorkspaceMember()
+  return member?.workspaceId ?? null
 }
 
 export async function fetchWorkspaceGoals(): Promise<GoalWithCounts[]> {

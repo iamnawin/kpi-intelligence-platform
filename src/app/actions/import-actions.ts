@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import type { ImportRow } from '@/lib/import-parser'
 import { proofPathRoutes } from '@/lib/proofpath-routes'
+import { getWorkspaceMember } from '@/lib/auth'
 
 export type ImportResult = {
   inserted: number
@@ -12,14 +13,8 @@ export type ImportResult = {
 
 export async function importGoals(rows: ImportRow[]): Promise<ImportResult> {
   const supabase = await createServerSupabaseClient()
-
-  const { data: memberRow } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .limit(1)
-    .single()
-
-  const workspaceId = memberRow?.workspace_id
+  const member = await getWorkspaceMember()
+  const workspaceId = member?.workspaceId
   if (!workspaceId) return { inserted: 0, errors: ['No workspace found'] }
 
   const capped = rows.slice(0, 100)

@@ -89,6 +89,7 @@ export async function GET(
   const { data: memberRow } = await supabase
     .from('workspace_members')
     .select('workspace_id')
+    .eq('user_id', user.id)
     .limit(1)
     .single()
 

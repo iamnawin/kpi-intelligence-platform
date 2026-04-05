@@ -2,17 +2,13 @@ import 'server-only'
 import { createServerSupabaseClient } from './supabase-server'
 import { mockKPIs, type KPI, type KPICategory, type KPITrend } from './mock-data'
 import type { EngineResult } from './api'
+import { getWorkspaceMember } from './auth'
 
 const ENGINE_URL = process.env.KPI_API_URL ?? 'http://localhost:3001'
 
 async function getWorkspaceId(): Promise<string | null> {
-  const supabase = await createServerSupabaseClient()
-  const { data } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .limit(1)
-    .single()
-  return data?.workspace_id ?? null
+  const member = await getWorkspaceMember()
+  return member?.workspaceId ?? null
 }
 
 async function runEngineEval(params: {

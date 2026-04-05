@@ -2,18 +2,14 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { AppShell } from '@/components/layout/app-shell'
+import { getWorkspaceMember } from '@/lib/auth'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabaseClient()
+  const member = await getWorkspaceMember()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
-
-  const { data: member } = await supabase
-    .from('workspace_members')
-    .select('workspace_id, workspace:workspaces(name)')
-    .limit(1)
-    .single()
 
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') ?? ''
@@ -22,7 +18,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect('/onboarding')
   }
 
-  const workspaceName = (member?.workspace as { name?: string } | null)?.name ?? null
   const displayName =
     (user.user_metadata?.full_name as string | undefined) ||
     user.email?.split('@')[0] ||
@@ -30,7 +25,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <AppShell
-      workspaceName={workspaceName}
+      workspaceName={member?.workspaceName ?? null}
       userEmail={user.email ?? ''}
       displayName={displayName}
     >

@@ -23,20 +23,25 @@ export default function SignupPage() {
     }
 
     setLoading(true)
-    const supabase = createClient()
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-    })
+    try {
+      const supabase = createClient()
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      })
 
-    if (signUpError) {
-      setError(signUpError.message)
+      if (signUpError) {
+        setError(signUpError.message)
+        return
+      }
+
+      setSent(true)
+    } catch {
+      setError('Unable to reach the authentication service. Check Vercel env vars and Supabase project access.')
+    } finally {
       setLoading(false)
-      return
     }
-
-    setSent(true)
   }
 
   if (sent) {

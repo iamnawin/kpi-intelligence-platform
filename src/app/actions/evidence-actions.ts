@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import type { TrustLevel } from '@/lib/goal-data'
+import { getWorkspaceMember } from '@/lib/auth'
 
 type EvidenceRow = { source_type: string | null; trust_level: string }
 
@@ -22,12 +23,7 @@ function computeTrustLevel(items: EvidenceRow[]): TrustLevel {
 
 export async function createEvidence(achievementId: string, formData: FormData): Promise<void> {
   const supabase = await createServerSupabaseClient()
-
-  const { data: memberRow } = await supabase
-    .from('workspace_members')
-    .select('id, workspace_id')
-    .limit(1)
-    .single()
+  const memberRow = await getWorkspaceMember()
 
   if (!memberRow) throw new Error('Not authenticated')
 
@@ -40,14 +36,14 @@ export async function createEvidence(achievementId: string, formData: FormData):
   if (!title) throw new Error('Title is required')
 
   const { error } = await supabase.from('evidence').insert({
-    workspace_id:  memberRow.workspace_id,
+    workspace_id:  memberRow.workspaceId,
     goal_id:       achievementId,
     title,
     evidence_type,
     description,
     source_url,
     source_type,
-    uploaded_by:   memberRow.id,
+    uploaded_by:   memberRow.memberId,
     trust_level:   source_type === 'manual' ? 'self_reported' : 'imported',
   })
 

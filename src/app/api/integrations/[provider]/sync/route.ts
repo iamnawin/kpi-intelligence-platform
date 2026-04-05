@@ -14,10 +14,17 @@ export async function POST(
 ) {
   const { provider } = await params
   const supabase = await createServerSupabaseClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   const validProviders: IntegrationProvider[] = ['jira', 'linear', 'asana', 'github']
   if (!validProviders.includes(provider as IntegrationProvider)) {
     return NextResponse.json({ error: 'Unknown provider' }, { status: 400 })
+  }
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const p = provider as IntegrationProvider
@@ -26,6 +33,7 @@ export async function POST(
   const { data: memberRow } = await supabase
     .from('workspace_members')
     .select('workspace_id')
+    .eq('user_id', user.id)
     .limit(1)
     .single()
 

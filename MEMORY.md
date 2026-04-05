@@ -225,6 +225,31 @@ Working name during early development: *KPI Intelligence Platform*.
   - `npm run build` passed
   - `npm run test` passed (88 tests)
 
+### Milestone 15 â€” Auth + Workspace Resolution Hardening (implemented 2026-04-05)
+- Added `getWorkspaceMember()` to `src/lib/auth.ts` so server code resolves the current user’s workspace/member row explicitly
+- Replaced anonymous `workspace_members.limit(1)` lookups in high-impact paths with user-scoped lookups:
+  - `src/app/(app)/layout.tsx`
+  - `src/lib/goal-data.ts`
+  - `src/lib/kpi-data.ts`
+  - `src/app/actions/achievement-actions.ts`
+  - `src/app/actions/goal-actions.ts`
+  - `src/app/actions/import-actions.ts`
+  - `src/app/actions/task-actions.ts`
+  - `src/app/actions/objective-actions.ts`
+  - `src/app/actions/evidence-actions.ts`
+  - `src/app/(app)/connections/page.tsx`
+  - `src/app/auth/callback/route.ts`
+  - `src/app/api/integrations/[provider]/callback/route.ts`
+  - `src/app/api/integrations/[provider]/sync/route.ts`
+- Login and signup now catch network/auth reachability failures and show a deployment-focused error message instead of raw `Failed to fetch`
+- This fixes two classes of auth issues:
+  - browser-facing fetch failures now surface clearer diagnostics
+  - signed-in users no longer risk binding to the wrong workspace because of unfiltered `workspace_members` queries
+- Verification:
+  - `npm run typecheck` passed
+  - `npm run build` passed
+  - `npm run test` passed (88 tests)
+
 ---
 
 ## Current Status
