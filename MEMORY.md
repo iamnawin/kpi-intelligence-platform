@@ -257,6 +257,7 @@ Working name during early development: *KPI Intelligence Platform*.
   - `src/app/(app)/loading.tsx`
 - Auth submit buttons now show animated spinners during sign-in and sign-up requests
 - Fixed the auth group layout to stop rendering nested `<html>` and `<body>` tags inside the root layout
+- Made achievement create/update actions omit late-schema ProofPath columns unless the form actually submits them
 - Added deployment-safe auth diagnostics:
   - `src/lib/auth-diagnostics.ts`
   - `src/app/api/diagnostics/auth/route.ts`
