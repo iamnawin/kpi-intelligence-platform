@@ -8,7 +8,7 @@ import {
   getAuthClientConfigError,
   normalizeAuthClientErrorMessage,
 } from '@/lib/auth-client-errors'
-import { ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -98,7 +98,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPw(v => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition-colors hover:text-gray-300"
             >
               {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -122,7 +122,12 @@ export default function LoginPage() {
           disabled={loading}
           className="group mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50"
         >
-          {loading ? 'Signing in…' : (
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Signing in...
+            </>
+          ) : (
             <>
               Sign in
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -139,7 +144,7 @@ export default function LoginPage() {
 
       <p className="mt-4 text-center text-sm text-gray-500">
         New to ProofPath?{' '}
-        <Link href="/signup" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+        <Link href="/signup" className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
           Create a free account
         </Link>
       </p>

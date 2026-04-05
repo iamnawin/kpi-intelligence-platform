@@ -7,7 +7,7 @@ import {
   getAuthClientConfigError,
   normalizeAuthClientErrorMessage,
 } from '@/lib/auth-client-errors'
-import { ArrowRight, CheckCircle2, Mail } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Loader2, Mail } from 'lucide-react'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -62,8 +62,7 @@ export default function SignupPage() {
         </div>
         <h2 className="text-xl font-bold text-white">Check your inbox</h2>
         <p className="mt-2 text-sm text-gray-400">
-          We sent a confirmation link to{' '}
-          <span className="font-medium text-white">{email}</span>
+          We sent a confirmation link to <span className="font-medium text-white">{email}</span>
         </p>
         <p className="mt-1 text-sm text-gray-500">
           Click the link to activate your account and set up your workspace.
@@ -72,7 +71,7 @@ export default function SignupPage() {
           <div className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-400" />
             <p className="text-xs text-gray-400">
-              After confirming your email, you&apos;ll be guided through setting up your first workspace and connecting your KPIs.
+              After confirming your email, you'll be guided through setting up your first workspace and connecting your KPIs.
             </p>
           </div>
         </div>
@@ -84,9 +83,7 @@ export default function SignupPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">Start for free</h1>
-        <p className="mt-1.5 text-sm text-gray-400">
-          Create your ProofPath workspace in 2 minutes
-        </p>
+        <p className="mt-1.5 text-sm text-gray-400">Create your ProofPath workspace in 2 minutes</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -152,7 +149,12 @@ export default function SignupPage() {
           disabled={loading}
           className="group mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 active:bg-blue-700 disabled:opacity-50"
         >
-          {loading ? 'Creating account…' : (
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Creating account...
+            </>
+          ) : (
             <>
               Create account
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -162,14 +164,13 @@ export default function SignupPage() {
       </form>
 
       <p className="mt-5 text-center text-xs text-gray-600">
-        By signing up, you agree to our{' '}
-        <span className="text-gray-500">Terms of Service</span> and{' '}
+        By signing up, you agree to our <span className="text-gray-500">Terms of Service</span> and{' '}
         <span className="text-gray-500">Privacy Policy</span>.
       </p>
 
       <p className="mt-3 text-center text-sm text-gray-500">
         Already have an account?{' '}
-        <Link href="/login" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+        <Link href="/login" className="font-semibold text-blue-400 transition-colors hover:text-blue-300">
           Sign in
         </Link>
       </p>

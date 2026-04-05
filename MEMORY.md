@@ -255,6 +255,7 @@ Working name during early development: *KPI Intelligence Platform*.
   - `src/components/layout/route-loading.tsx`
   - `src/app/(auth)/loading.tsx`
   - `src/app/(app)/loading.tsx`
+- Auth submit buttons now show animated spinners during sign-in and sign-up requests
 - Added deployment-safe auth diagnostics:
   - `src/lib/auth-diagnostics.ts`
   - `src/app/api/diagnostics/auth/route.ts`
