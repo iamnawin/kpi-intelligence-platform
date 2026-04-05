@@ -250,6 +250,27 @@ Working name during early development: *KPI Intelligence Platform*.
   - `npm run build` passed
   - `npm run test` passed (88 tests)
 
+### Milestone 16 â€” Deploy-safe Auth Diagnostics + Route Loaders (implemented 2026-04-05)
+- Added route-level loading states for auth and app transitions:
+  - `src/components/layout/route-loading.tsx`
+  - `src/app/(auth)/loading.tsx`
+  - `src/app/(app)/loading.tsx`
+- Added deployment-safe auth diagnostics:
+  - `src/lib/auth-diagnostics.ts`
+  - `src/app/api/diagnostics/auth/route.ts`
+  - `src/app/(auth)/auth-status/page.tsx`
+- Login and signup error states now link directly to `/auth-status`
+- Diagnostics expose only:
+  - env-var presence booleans
+  - derived request origin and callback URL
+  - Supabase host
+  - server-side reachability probe to Supabase Auth settings
+- This makes the deployed app itself report whether the current environment is missing public Supabase keys, deriving the wrong callback origin, or unable to reach the Supabase Auth service
+- Verification:
+  - `npm run typecheck` passed
+  - `npm run build` passed
+  - `npm run test` passed (88 tests)
+
 ---
 
 ## Current Status
@@ -264,6 +285,7 @@ Working name during early development: *KPI Intelligence Platform*.
 
 **What works**:
 - Full auth flow with Supabase Auth (email + password)
+- Auth diagnostics page at `/auth-status` for deployment checks
 - Workspace creation with RLS-safe RPC
 - Route protection via Next.js middleware
 - Proof Feed, Achievements, Proof Profile, and Connections are the primary user-facing routes

@@ -4,6 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import {
+  getAuthClientConfigError,
+  normalizeAuthClientErrorMessage,
+} from '@/lib/auth-client-errors'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
@@ -17,6 +21,11 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+    const configError = getAuthClientConfigError()
+    if (configError) {
+      setError(configError)
+      return
+    }
     setLoading(true)
 
     try {
@@ -24,7 +33,7 @@ export default function LoginPage() {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
       if (signInError) {
-        setError(signInError.message)
+        setError(normalizeAuthClientErrorMessage(signInError.message))
         return
       }
 
@@ -43,7 +52,7 @@ export default function LoginPage() {
 
       router.push(member ? '/' : '/onboarding')
     } catch {
-      setError('Unable to reach the authentication service. Check Vercel env vars and Supabase project access.')
+      setError(normalizeAuthClientErrorMessage('Failed to fetch'))
     } finally {
       setLoading(false)
     }
@@ -98,7 +107,13 @@ export default function LoginPage() {
 
         {error && (
           <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-            {error}
+            <p>{error}</p>
+            <Link
+              href="/auth-status"
+              className="mt-2 inline-block font-medium text-red-300 underline underline-offset-4 transition-colors hover:text-red-200"
+            >
+              Open auth diagnostics
+            </Link>
           </div>
         )}
 
