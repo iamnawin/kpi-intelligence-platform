@@ -5,3 +5,6 @@ node_modules
 .env*.local
 tsconfig.tsbuildinfo
 next-env.d.ts
+.omx/logs/
+.omx/state/
+.omx/metrics.json

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { Lock, Shield, FileText, Calendar, Tag, Trophy, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import type { EvidenceType } from '@/lib/goal-data'
+import type { EvidenceType } from '@/lib/achievement-data'
 
 type Props = { params: Promise<{ token: string }> }
 

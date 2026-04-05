@@ -1,16 +1,15 @@
 import Link from "next/link"
 import { Trophy, Plus, Upload, ArrowRight, TrendingUp, Shield, CheckCircle2 } from "lucide-react"
-import { fetchWorkspaceGoals } from "@/lib/goal-data"
+import { fetchWorkspaceAchievements, type AchievementWithCounts } from "@/lib/achievement-data"
 import { GoalRow } from "@/components/goal/goal-row"
-import type { GoalWithCounts } from "@/lib/goal-data"
 
 export default async function AchievementsPage() {
-  const achievements = await fetchWorkspaceGoals()
+  const achievements = await fetchWorkspaceAchievements()
 
   // Build hierarchy tree in one pass
   const idSet = new Set(achievements.map(a => a.id))
-  const topLevel: GoalWithCounts[] = []
-  const byParent: Record<string, GoalWithCounts[]> = {}
+  const topLevel: AchievementWithCounts[] = []
+  const byParent: Record<string, AchievementWithCounts[]> = {}
 
   for (const a of achievements) {
     const parentInSet = a.parent_goal_id && idSet.has(a.parent_goal_id)
@@ -24,7 +23,7 @@ export default async function AchievementsPage() {
   const STATUS_ORDER: Record<string, number> = {
     in_progress: 0, at_risk: 1, not_started: 2, completed: 3, cancelled: 4,
   }
-  const sortByStatus = (a: GoalWithCounts, b: GoalWithCounts) =>
+  const sortByStatus = (a: AchievementWithCounts, b: AchievementWithCounts) =>
     (STATUS_ORDER[a.status] ?? 5) - (STATUS_ORDER[b.status] ?? 5)
 
   topLevel.sort(sortByStatus)

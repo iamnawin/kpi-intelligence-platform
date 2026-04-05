@@ -1,6 +1,7 @@
 import { GoalCard } from '@/components/goal/goal-card'
 import { KPICard } from '@/components/kpi/kpi-card'
 import type { DashboardData } from '@/lib/dashboard-data'
+import { proofPathRoutes } from '@/lib/proofpath-routes'
 
 type Props = {
   data: DashboardData
@@ -24,11 +25,11 @@ export function PersonalView({ data, displayName }: Props) {
         </p>
       </div>
 
-      {/* My Goals */}
+      {/* My Achievements */}
       {myGoals.length > 0 ? (
         <section>
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-            My Active Goals
+            My Active Achievements
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {myGoals.slice(0, 6).map(goal => (
@@ -38,9 +39,9 @@ export function PersonalView({ data, displayName }: Props) {
         </section>
       ) : (
         <div className="rounded-xl border border-dashed border-gray-300 py-10 text-center dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400">No active goals assigned to you.</p>
-          <a href="/goals/new" className="mt-2 inline-block text-sm text-blue-600 hover:underline dark:text-blue-400">
-            Create your first goal →
+          <p className="text-sm text-gray-500 dark:text-gray-400">No active achievements assigned to you.</p>
+          <a href={proofPathRoutes.newAchievement} className="mt-2 inline-block text-sm text-blue-600 hover:underline dark:text-blue-400">
+            Create your first achievement →
           </a>
         </div>
       )}

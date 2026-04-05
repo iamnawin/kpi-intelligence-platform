@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { proofPathRoutes } from '@/lib/proofpath-routes'
 
 async function getWorkspaceId(): Promise<string | null> {
   const supabase = await createServerSupabaseClient()
@@ -52,8 +53,8 @@ export async function createGoal(formData: FormData): Promise<void> {
 
   if (error) throw new Error(error.message)
 
-  revalidatePath('/goals')
-  redirect('/goals')
+  revalidatePath(proofPathRoutes.achievements)
+  redirect(proofPathRoutes.achievements)
 }
 
 export async function updateGoal(id: string, formData: FormData): Promise<void> {
@@ -95,7 +96,7 @@ export async function updateGoal(id: string, formData: FormData): Promise<void> 
 
   if (error) throw new Error(error.message)
 
-  revalidatePath('/goals')
-  revalidatePath(`/goals/${id}`)
-  redirect(`/goals/${id}`)
+  revalidatePath(proofPathRoutes.achievements)
+  revalidatePath(proofPathRoutes.achievementDetail(id))
+  redirect(proofPathRoutes.achievementDetail(id))
 }

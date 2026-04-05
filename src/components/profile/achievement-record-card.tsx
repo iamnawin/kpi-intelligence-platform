@@ -1,6 +1,6 @@
 import { Lock, FileText, Calendar, Tag, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import type { LockedProofRecord } from '@/lib/goal-data'
+import type { LockedProofRecord } from '@/lib/achievement-data'
 import { ExportButton } from './export-button'
 
 const TYPE_LABEL: Record<string, string> = {

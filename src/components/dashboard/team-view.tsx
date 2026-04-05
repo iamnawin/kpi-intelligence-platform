@@ -19,16 +19,16 @@ export function TeamView({ data }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Team Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Team Feed</h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Progress across all team goals and metrics.
+          Progress across team achievements, evidence, and supporting signals.
         </p>
       </div>
 
       {/* Rollup stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Goals',  value: totalGoals },
+          { label: 'Total Achievements',  value: totalGoals },
           { label: 'Completed',    value: completedGoals },
           { label: 'At Risk',      value: atRiskGoals },
         ].map(stat => (
@@ -59,7 +59,7 @@ export function TeamView({ data }: Props) {
       {teamGoals.length > 0 && (
         <section>
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-            Team Goals
+            Team Achievements
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {teamGoals.map(goal => (

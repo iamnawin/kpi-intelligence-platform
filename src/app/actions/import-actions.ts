@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import type { ImportRow } from '@/lib/import-parser'
+import { proofPathRoutes } from '@/lib/proofpath-routes'
 
 export type ImportResult = {
   inserted: number
@@ -48,7 +49,7 @@ export async function importGoals(rows: ImportRow[]): Promise<ImportResult> {
   }
 
   if (inserted > 0) {
-    revalidatePath('/goals')
+    revalidatePath(proofPathRoutes.achievements)
   }
 
   return { inserted, errors }

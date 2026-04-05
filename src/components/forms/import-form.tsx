@@ -5,6 +5,7 @@ import { Upload, FileText, AlertCircle, CheckCircle2, ChevronRight } from 'lucid
 import { parseCSV, parseJSON, validateImportRows } from '@/lib/import-parser'
 import { importGoals } from '@/app/actions/import-actions'
 import type { ImportRow } from '@/lib/import-parser'
+import { proofPathRoutes } from '@/lib/proofpath-routes'
 
 type Step = 1 | 2 | 3
 
@@ -203,7 +204,7 @@ export function ImportForm() {
               disabled={importing || rows.length === 0}
               className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
             >
-              {importing ? 'Importing…' : `Import ${Math.min(rows.length, 100)} Goal${rows.length !== 1 ? 's' : ''}`}
+              {importing ? 'Importing…' : `Import ${Math.min(rows.length, 100)} Achievement${rows.length !== 1 ? 's' : ''}`}
             </button>
             <button
               type="button"
@@ -231,7 +232,7 @@ export function ImportForm() {
             <div>
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-50">
                 {result.inserted > 0
-                  ? `${result.inserted} goal${result.inserted !== 1 ? 's' : ''} imported successfully`
+                  ? `${result.inserted} achievement${result.inserted !== 1 ? 's' : ''} imported successfully`
                   : 'Import failed'}
               </p>
               {result.errors.length > 0 && (
@@ -246,10 +247,10 @@ export function ImportForm() {
 
           <div className="flex items-center gap-3">
             <a
-              href="/goals"
+              href={proofPathRoutes.achievements}
               className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
-              View Goals
+              View Achievements
             </a>
             <button
               type="button"

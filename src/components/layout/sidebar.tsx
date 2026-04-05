@@ -3,22 +3,18 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  LayoutDashboard, Bell, Sparkles, Trophy, UserCircle2,
+  LayoutDashboard, Trophy, UserCircle2,
   Plug, ChevronRight, Building2, User2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { proofPathRoutes } from "@/lib/proofpath-routes"
 
 type NavItem = { href: string; label: string; icon: React.ElementType; badge?: string }
 
 const NAV_MAIN: NavItem[] = [
   { href: "/",              label: "Proof Feed",    icon: LayoutDashboard },
-  { href: "/achievements",  label: "Achievements",  icon: Trophy },
+  { href: proofPathRoutes.achievements,  label: "Achievements",  icon: Trophy },
   { href: "/profile",       label: "Proof Profile", icon: UserCircle2 },
-]
-
-const NAV_ANALYTICS: NavItem[] = [
-  { href: "/alerts",   label: "Alerts",      icon: Bell },
-  { href: "/insights", label: "AI Insights", icon: Sparkles },
 ]
 
 const NAV_SETTINGS: NavItem[] = [
@@ -91,7 +87,6 @@ export function Sidebar({ workspaceName, userEmail, displayName }: Props) {
       {/* Navigation */}
       <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 py-4">
         <NavGroup label="Overview" items={NAV_MAIN} pathname={pathname} />
-        <NavGroup label="Analytics" items={NAV_ANALYTICS} pathname={pathname} />
         <NavGroup label="Settings" items={NAV_SETTINGS} pathname={pathname} />
       </nav>
 

@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Lock } from 'lucide-react'
-import { fetchGoalById } from '@/lib/goal-data'
+import { fetchAchievementById } from '@/lib/achievement-data'
 import { getSession } from '@/lib/auth'
 import { GoalStatusBadge } from '@/components/goal/goal-status-badge'
 import { TrustBadge } from '@/components/goal/trust-badge'
@@ -16,7 +16,7 @@ export default async function AchievementReviewPage({ params }: Props) {
 
   const [session, data] = await Promise.all([
     getSession(),
-    fetchGoalById(id),
+    fetchAchievementById(id),
   ])
 
   if (!data) notFound()

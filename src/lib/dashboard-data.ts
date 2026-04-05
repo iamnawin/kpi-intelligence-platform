@@ -1,17 +1,19 @@
 import 'server-only'
 import { createServerSupabaseClient } from './supabase-server'
-import type { GoalWithCounts } from './goal-data'
+import type { AchievementWithCounts } from './achievement-data'
 import type { KPI } from './mock-data'
 import { fetchWorkspaceKPIs } from './kpi-data'
 
 export type DashboardView = 'personal' | 'team' | 'company'
 
 export type DashboardData = {
-  goals: GoalWithCounts[]
+  goals: AchievementWithCounts[]
   kpis: KPI[]
   totalGoals: number
   completedGoals: number
   atRiskGoals: number
+  verifiedAchievements: number
+  lockedProofCount: number
 }
 
 const GOAL_SELECT = `
@@ -42,7 +44,15 @@ export async function fetchDashboardData(
 
   const workspaceId = memberRow?.workspace_id
   if (!workspaceId) {
-    return { goals: [], kpis: [], totalGoals: 0, completedGoals: 0, atRiskGoals: 0 }
+    return {
+      goals: [],
+      kpis: [],
+      totalGoals: 0,
+      completedGoals: 0,
+      atRiskGoals: 0,
+      verifiedAchievements: 0,
+      lockedProofCount: 0,
+    }
   }
 
   let query = supabase
@@ -71,20 +81,20 @@ export async function fetchDashboardData(
   const { data: rows } = await query.limit(20)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const goals: GoalWithCounts[] = (rows ?? []).map((r: any) => ({
+  const goals: AchievementWithCounts[] = (rows ?? []).map((r: any) => ({
     id:             r['id'] as string,
     workspace_id:   r['workspace_id'] as string,
     title:          r['title'] as string,
     description:    r['description'] as string | null,
-    status:         r['status'] as GoalWithCounts['status'],
+    status:         r['status'] as AchievementWithCounts['status'],
     progress_pct:   r['progress_pct'] as number,
-    trust_level:    r['trust_level'] as GoalWithCounts['trust_level'],
+    trust_level:    r['trust_level'] as AchievementWithCounts['trust_level'],
     start_date:     r['start_date'] as string | null,
     end_date:       r['end_date'] as string | null,
     parent_goal_id: r['parent_goal_id'] as string | null,
     objective_id:   r['objective_id'] as string | null,
-    goal_type:      (r['goal_type'] as GoalWithCounts['goal_type']) ?? 'standard',
-    kr_type:        r['kr_type'] as GoalWithCounts['kr_type'] | null,
+    goal_type:      (r['goal_type'] as AchievementWithCounts['goal_type']) ?? 'standard',
+    kr_type:        r['kr_type'] as AchievementWithCounts['kr_type'] | null,
     target_value:   r['target_value'] as number | null,
     current_value:  r['current_value'] as number | null,
     unit:           r['unit'] as string | null,
@@ -103,5 +113,11 @@ export async function fetchDashboardData(
     totalGoals:     goals.length,
     completedGoals: goals.filter(g => g.status === 'completed').length,
     atRiskGoals:    goals.filter(g => g.status === 'at_risk').length,
+    verifiedAchievements: goals.filter(g =>
+      g.trust_level === 'reviewer_approved' ||
+      g.trust_level === 'system_verified' ||
+      g.trust_level === 'locked_proof'
+    ).length,
+    lockedProofCount: goals.filter(g => g.trust_level === 'locked_proof').length,
   }
 }

@@ -14,10 +14,12 @@ export type {
   EvidenceRecord,
   TaskRecord,
   LinkedKPI,
+  LockedProofRecord,
 } from './goal-data'
 
 // Semantic function aliases
 export {
   fetchWorkspaceGoals as fetchWorkspaceAchievements,
   fetchGoalById       as fetchAchievementById,
+  fetchLockedProofRecords as fetchLockedProofAchievements,
 } from './goal-data'

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { GoalWithCounts, GoalStatus, GoalType, KRType } from '@/lib/goal-data'
+import { proofPathRoutes } from '@/lib/proofpath-routes'
 
 type GoalFormProps = {
   mode: 'create' | 'edit'
@@ -36,7 +37,10 @@ const inputCls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm tex
 const labelCls = 'mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300'
 
 export function GoalForm({ mode, goal, action, objectiveId }: GoalFormProps) {
-  const cancelHref = mode === 'edit' && goal ? `/goals/${goal.id}` : '/goals'
+  const cancelHref =
+    mode === 'edit' && goal
+      ? proofPathRoutes.achievementDetail(goal.id)
+      : proofPathRoutes.achievements
 
   const defaultObjId = goal?.objective_id ?? objectiveId ?? ''
   const defaultGoalType = goal?.goal_type ?? (objectiveId ? 'strategic' : 'standard')
@@ -257,7 +261,7 @@ export function GoalForm({ mode, goal, action, objectiveId }: GoalFormProps) {
           type="submit"
           className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          {mode === 'create' ? 'Create Goal' : 'Save Changes'}
+          {mode === 'create' ? 'Create Achievement' : 'Save Achievement'}
         </button>
         <a
           href={cancelHref}

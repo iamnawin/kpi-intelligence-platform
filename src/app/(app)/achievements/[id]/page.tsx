@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Pencil, CheckSquare, FileText, ClipboardCheck, Send } from "lucide-react"
-import { fetchGoalById } from "@/lib/goal-data"
+import { fetchAchievementById, type TrustLevel } from "@/lib/achievement-data"
 import { getSession } from "@/lib/auth"
 import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { TrustBadge } from "@/components/goal/trust-badge"
@@ -16,13 +16,12 @@ import { createEvidence } from "@/app/actions/evidence-actions"
 import { submitForReview } from "@/app/actions/review-actions"
 import { fetchConnectedProviders } from "@/app/actions/integration-actions"
 import { EvidenceImportPanel } from "@/components/goal/evidence-import-panel"
-import type { TrustLevel } from "@/lib/goal-data"
 
 type Props = { params: Promise<{ id: string }> }
 
 export default async function AchievementDetailPage({ params }: Props) {
   const { id } = await params
-  const [data, session] = await Promise.all([fetchGoalById(id), getSession()])
+  const [data, session] = await Promise.all([fetchAchievementById(id), getSession()])
   if (!data) notFound()
 
   const { goal, evidence, tasks } = data

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { proofPathRoutes } from '@/lib/proofpath-routes'
 
 async function getWorkspaceId(): Promise<string | null> {
   const supabase = await createServerSupabaseClient()
@@ -33,5 +34,5 @@ export async function createTask(goalId: string, formData: FormData): Promise<vo
 
   if (error) throw new Error(error.message)
 
-  revalidatePath(`/goals/${goalId}`)
+  revalidatePath(proofPathRoutes.achievementDetail(goalId))
 }

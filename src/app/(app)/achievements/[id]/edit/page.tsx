@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import { fetchGoalById } from "@/lib/goal-data"
+import { fetchAchievementById } from "@/lib/achievement-data"
 import { GoalForm } from "@/components/forms/goal-form"
 import { updateAchievement } from "@/app/actions/achievement-actions"
 
@@ -9,7 +9,7 @@ type Props = { params: Promise<{ id: string }> }
 
 export default async function EditAchievementPage({ params }: Props) {
   const { id } = await params
-  const data = await fetchGoalById(id)
+  const data = await fetchAchievementById(id)
   if (!data) notFound()
 
   const boundUpdate = updateAchievement.bind(null, id)

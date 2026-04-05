@@ -1,6 +1,6 @@
 import { UserCircle2, Trophy, Lock, Shield, Star, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { fetchWorkspaceGoals, fetchLockedProofRecords } from "@/lib/goal-data"
+import { fetchProofProfileData } from "@/lib/proof-data"
 import { getSession } from "@/lib/auth"
 import { createServerSupabaseClient } from "@/lib/supabase-server"
 import { TrustBadge } from "@/components/goal/trust-badge"
@@ -8,19 +8,14 @@ import { GoalStatusBadge } from "@/components/goal/goal-status-badge"
 import { AchievementRecordCard } from "@/components/profile/achievement-record-card"
 import { ProfileEditForm } from "@/components/profile/profile-edit-form"
 
-const TRUST_WEIGHT: Record<string, number> = {
-  draft: 0, self_reported: 20, imported: 40,
-  reviewer_approved: 70, system_verified: 85, locked_proof: 100,
-}
-
 export default async function ProofProfilePage() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-  const [session, achievements, lockedRecords] = await Promise.all([
+  const [session, proofData] = await Promise.all([
     getSession(),
-    fetchWorkspaceGoals(),
-    fetchLockedProofRecords(),
+    fetchProofProfileData(),
   ])
+  const { achievements, lockedRecords, summary } = proofData
 
   // Fetch role_title + bio from workspace_members
   let roleTitle: string | null = null
@@ -35,19 +30,6 @@ export default async function ProofProfilePage() {
     roleTitle = memberRow?.role_title ?? null
     bio       = memberRow?.bio ?? null
   }
-
-  const completed = achievements.filter(a => a.status === 'completed')
-  const verified  = achievements.filter(a =>
-    a.trust_level === 'reviewer_approved' ||
-    a.trust_level === 'system_verified' ||
-    a.trust_level === 'locked_proof'
-  )
-
-  const trustScore = achievements.length === 0 ? 0 : Math.round(
-    achievements.reduce((sum, a) => sum + (TRUST_WEIGHT[a.trust_level] ?? 0), 0) / achievements.length
-  )
-
-  const inProgress = achievements.filter(a => a.trust_level !== 'locked_proof')
 
   const displayName = session?.displayName ?? 'You'
 
@@ -70,7 +52,7 @@ export default async function ProofProfilePage() {
           </div>
           {/* Trust score ring */}
           <div className="shrink-0 text-center">
-            <p className="text-3xl font-bold text-violet-400">{trustScore}</p>
+            <p className="text-3xl font-bold text-violet-400">{summary.trustScore}</p>
             <p className="text-xs text-gray-600">Trust Score</p>
           </div>
         </div>
@@ -87,12 +69,12 @@ export default async function ProofProfilePage() {
         <div className="relative mt-4">
           <div className="mb-1.5 flex items-center justify-between">
             <p className="text-xs text-gray-600">Proof Strength</p>
-            <p className="text-xs text-gray-500">{trustScore} / 100</p>
+            <p className="text-xs text-gray-500">{summary.trustScore} / 100</p>
           </div>
           <div className="h-1.5 w-full rounded-full bg-gray-800">
             <div
               className="h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 transition-all"
-              style={{ width: `${trustScore}%` }}
+              style={{ width: `${summary.trustScore}%` }}
             />
           </div>
         </div>
@@ -101,10 +83,10 @@ export default async function ProofProfilePage() {
       {/* ── Summary stats ── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total",     value: achievements.length, color: "text-gray-100",    accent: "border-gray-800 bg-gray-900" },
-          { label: "Completed", value: completed.length,    color: "text-emerald-400", accent: "border-emerald-500/20 bg-emerald-500/5" },
-          { label: "Verified",  value: verified.length,     color: "text-blue-400",    accent: "border-blue-500/20 bg-blue-500/5" },
-          { label: "Locked",    value: lockedRecords.length, color: "text-purple-400", accent: "border-purple-500/20 bg-purple-500/5" },
+          { label: "Total",     value: summary.totalAchievements, color: "text-gray-100",    accent: "border-gray-800 bg-gray-900" },
+          { label: "Completed", value: summary.completedAchievements, color: "text-emerald-400", accent: "border-emerald-500/20 bg-emerald-500/5" },
+          { label: "Verified",  value: summary.verifiedAchievements, color: "text-blue-400",    accent: "border-blue-500/20 bg-blue-500/5" },
+          { label: "Locked",    value: summary.lockedProofCount, color: "text-purple-400", accent: "border-purple-500/20 bg-purple-500/5" },
         ].map(s => (
           <div key={s.label} className={`rounded-xl border p-4 ${s.accent}`}>
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
@@ -156,7 +138,7 @@ export default async function ProofProfilePage() {
           )}
 
           {/* ── In Progress / Other Achievements ── */}
-          {inProgress.length > 0 && (
+          {summary.activeAchievements.length > 0 && (
             <section className="flex flex-col gap-4">
               <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
                 In Progress
@@ -164,7 +146,7 @@ export default async function ProofProfilePage() {
 
               <div className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900">
                 <div className="divide-y divide-gray-800/80">
-                  {inProgress.map(a => (
+                  {summary.activeAchievements.map(a => (
                     <Link
                       key={a.id}
                       href={`/achievements/${a.id}`}
@@ -196,7 +178,7 @@ export default async function ProofProfilePage() {
                 </div>
               </div>
 
-              {verified.length === 0 && (
+              {summary.verifiedAchievements === 0 && (
                 <p className="text-center text-xs text-gray-600">
                   None of your achievements are manager-approved yet.{' '}
                   <Link href="/achievements" className="text-blue-500 hover:underline">

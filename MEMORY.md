@@ -154,11 +154,72 @@ Working name during early development: *KPI Intelligence Platform*.
 - `npm typecheck`: 0 errors | `npm test`: 83/83 passing
 - **Pushed to GitHub main**
 
+### Milestone 11 â€” OMX Dev Workflow Setup (implemented 2026-04-05)
+- Added repo-local OMX workflow guidance:
+  - `docs/omx-workflow.md`
+  - `.omx/README.md`
+  - `.omx/plans/.gitkeep`
+- Added `.omx/plans/proofpath-realignment-plan-2026-04-05.md` as the active restructuring plan
+- Updated `.gitignore` to ignore OMX runtime churn:
+  - `.omx/logs/`
+  - `.omx/state/`
+  - `.omx/metrics.json`
+- Explicitly kept OMX as developer tooling only, not application runtime
+
+### Milestone 12 â€” ProofPath Surface Cleanup (implemented 2026-04-05)
+- Added `src/lib/proofpath-routes.ts` for canonical achievement/proof routes
+- Added route test: `src/lib/__tests__/proofpath-routes.test.ts`
+- Sidebar now exposes only:
+  - Proof Feed
+  - Achievements
+  - Proof Profile
+  - Connections
+- Removed `Alerts` and `AI Insights` from primary navigation
+- Legacy `/goals/*` pages now redirect to `/achievements/*`
+- Shared forms and flows now route back to achievements:
+  - `src/components/forms/goal-form.tsx`
+  - `src/components/forms/import-form.tsx`
+  - `src/components/dashboard/personal-view.tsx`
+  - `src/app/actions/task-actions.ts`
+  - `src/app/actions/import-actions.ts`
+  - `src/app/actions/goal-actions.ts`
+- Stabilized standalone typecheck by clearing stale `.next/types` before `tsc`
+- Verification:
+  - `npm run typecheck` passed
+  - `npm run build` passed
+  - `npm run test` passed (85 tests at that point)
+
+### Milestone 13 â€” Proof Data Layer + Achievement-First Dashboard (implemented 2026-04-05)
+- Extended `src/lib/achievement-data.ts` with semantic exports for locked proof records
+- Added dedicated proof modules:
+  - `src/lib/proof-data.ts`
+  - `src/lib/proof-metrics.ts`
+- Added proof metrics test:
+  - `src/lib/__tests__/proof-metrics.test.ts`
+- ProofPath pages now use semantic loaders instead of importing `goal-data` directly:
+  - `src/app/(app)/achievements/page.tsx`
+  - `src/app/(app)/achievements/[id]/page.tsx`
+  - `src/app/(app)/achievements/[id]/review/page.tsx`
+  - `src/app/(app)/achievements/[id]/edit/page.tsx`
+  - `src/app/(app)/profile/page.tsx`
+  - `src/app/proof/[token]/page.tsx`
+  - `src/components/profile/achievement-record-card.tsx`
+- Company/team dashboard moved closer to ProofPath semantics:
+  - `src/app/(app)/page.tsx`
+  - `src/lib/dashboard-data.ts`
+  - `src/components/dashboard/team-view.tsx`
+  - `src/components/dashboard/executive-strip.tsx`
+- Executive/company view now emphasizes achievements, verified work, and locked proof instead of KPI hero cards
+- Verification:
+  - `npm run typecheck` passed
+  - `npm run build` passed
+  - `npm run test` passed (88 tests)
+
 ---
 
 ## Current Status
 
-**Phase**: M10 COMPLETE — All 5 phases (A+B+C+D+E) shipped ✅
+**Phase**: M13 COMPLETE — ProofPath realignment is active and the achievement/proof flow is the primary product surface.
 
 **Auth flow**:
 ```
@@ -170,14 +231,19 @@ Working name during early development: *KPI Intelligence Platform*.
 - Full auth flow with Supabase Auth (email + password)
 - Workspace creation with RLS-safe RPC
 - Route protection via Next.js middleware
-- Dashboard shows live KPI data from core engine (falls back to mock)
-- Goals layer: list, detail, create, edit — all with Supabase backend
-- Tasks inline form on goal detail page
+- Proof Feed, Achievements, Proof Profile, and Connections are the primary user-facing routes
+- Legacy `/goals/*` URLs still resolve, but redirect to `/achievements/*`
+- Achievements layer: list, detail, create, edit, review, import, export
+- Tasks inline form on achievement detail page
 - Evidence cards with trust levels
+- Locked proof records and public proof links
 - Full dark theme across all pages (forced dark, no toggle)
-- 83 passing tests
+- Stable standalone `npm run typecheck`
+- 88 passing tests
 
-**M10 All Phases Complete** — No remaining phases.
+**Still in transition**:
+- Storage and some shared types still use `goals` table semantics behind the ProofPath layer
+- KPI engine and placeholder analytics routes still exist, but are no longer the main product story
 
 ---
 
