@@ -286,8 +286,13 @@ Working name during early development: *KPI Intelligence Platform*.
   - achievements as the core record
   - connections as supporting signal inputs
   - profile as the proof output
+- Phase B first slice now makes the integration handoff explicit:
+  - workspace sync in Connections
+  - evidence import on the achievement detail page
 - Verification:
-  - pending after the current copy and UX pass
+  - `npm run typecheck` passed
+  - `npm run test` passed (88 tests)
+  - `npm run build` passed
 
 ---
 

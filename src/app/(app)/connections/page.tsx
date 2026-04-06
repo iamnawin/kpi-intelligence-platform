@@ -110,6 +110,15 @@ export default async function ConnectionsPage({
         </div>
       </div>
 
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/70 p-5">
+        <h2 className="text-sm font-semibold text-white">What sync actually does</h2>
+        <p className="mt-2 text-sm leading-relaxed text-gray-400">
+          Sync does not mirror your entire external tool into ProofPath and it does not automatically create proof.
+          It pulls matching external work into the workspace task layer first. Later, from an achievement page,
+          you import the most relevant completed items as evidence for that record.
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {PROVIDERS.map(provider => (
           <IntegrationCard

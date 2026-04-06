@@ -154,8 +154,7 @@ export default async function AchievementDetailPage({ params }: Props) {
             )}
 
             {!isLocked && connectedProviders.length > 0 && (
-              <div className="mb-2">
-                <p className="mb-2 text-xs text-gray-600">Import completed items as evidence:</p>
+              <div className="mb-3">
                 <EvidenceImportPanel achievementId={goal.id} connectedProviders={connectedProviders} />
               </div>
             )}

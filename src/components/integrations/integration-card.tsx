@@ -61,7 +61,8 @@ export function IntegrationCard({ provider, name, description, logo, isConnected
           </p>
         )}
         <p className="text-xs text-gray-600">
-          Sync updates workspace tasks first. Achievement evidence is attached later from the relevant record.
+          Sync updates workspace tasks first. After that, open an achievement and import the relevant completed
+          items as evidence.
         </p>
       </div>
 
