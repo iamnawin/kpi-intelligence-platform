@@ -13,6 +13,19 @@ so every business decision is backed by verifiable proof.
 
 Working name during early development: *KPI Intelligence Platform*.
 
+## Logging Rule
+
+Every meaningful implementation pass must update:
+
+- `MEMORY.md` with what changed and what was verified
+- `CLAUDE.md` when the canonical product story, architecture, workflow, or repo guidance changed
+
+Timestamp requirement:
+
+- every new entry must include a concrete date or timestamp
+- prefer `YYYY-MM-DD` for milestones and status notes
+- use a fuller timestamp when an exact update time matters
+
 ---
 
 ## Milestones Completed
